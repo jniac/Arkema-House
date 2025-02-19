@@ -89,6 +89,25 @@ def rename_C4D_uv():
                 if uv.name == 'UVW':
                     uv.name = 'UVMap'
 
+# Function to unparent all objects without affecting their transforms
+def unparent_objects():
+    for obj in bpy.context.scene.objects:
+        if obj.parent:
+            # Unparent while keeping the object's world transform
+            obj.select_set(True)
+            bpy.context.view_layer.objects.active = obj
+            bpy.ops.object.parent_clear(type='CLEAR_KEEP_TRANSFORM')
+            print(f"Unparented: {obj.name}")
+
+# Function to delete empty objects (Empties with no children)
+def delete_empty_objects():
+    # Collect objects to remove
+    empties_to_delete = [obj for obj in bpy.context.scene.objects if obj.type == 'EMPTY' and len(obj.children) == 0]
+
+    # Delete collected empties
+    for empty in empties_to_delete:
+        bpy.data.objects.remove(empty, do_unlink=True)
+        print(f"Deleted empty: {empty.name}")
 
 # Main function
 def prepare_for_lightmap_baking():
