@@ -82,19 +82,21 @@ def delete_curves():
             print(f"Deleting curve: {obj.name}")
             bpy.data.objects.remove(obj, do_unlink=True)
 
+def rename_C4D_uv():
+    for obj in bpy.data.objects:
+        if obj.type == 'MESH':
+            for uv in obj.data.uv_layers:
+                if uv.name == 'UVW':
+                    uv.name = 'UVMap'
+
+
 # Main function
 def prepare_for_lightmap_baking():
-    # Save the current file with a timestamped suffix
     save_lightmap_version()
-
-    # Apply all modifiers on meshes
     apply_all_modifiers()
-
-    # Delete invisible objects
     delete_invisible_objects()
-
-    # Delete curves
     delete_curves()
+    rename_C4D_uv()
 
     print("Lightmap preparation complete!")
 
