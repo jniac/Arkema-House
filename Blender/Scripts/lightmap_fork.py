@@ -89,8 +89,8 @@ def rename_C4D_uv():
                 if uv.name == 'UVW':
                     uv.name = 'UVMap'
 
-# Function to unparent all objects without affecting their transforms
 def unparent_objects():
+    """Function to unparent all objects without affecting their transforms"""
     for obj in bpy.context.scene.objects:
         if obj.parent:
             # Unparent while keeping the object's world transform
@@ -99,9 +99,8 @@ def unparent_objects():
             bpy.ops.object.parent_clear(type='CLEAR_KEEP_TRANSFORM')
             print(f"Unparented: {obj.name}")
 
-# Function to delete empty objects (Empties with no children)
 def delete_empty_objects():
-    # Collect objects to remove
+    """Function to delete empty objects (Empties with no children)"""
     empties_to_delete = [obj for obj in bpy.context.scene.objects if obj.type == 'EMPTY' and len(obj.children) == 0]
 
     # Delete collected empties
@@ -109,13 +108,114 @@ def delete_empty_objects():
         bpy.data.objects.remove(empty, do_unlink=True)
         print(f"Deleted empty: {empty.name}")
 
+def delete_empty_collections():
+    """Collect and delete empty collections"""
+    empty_collections = [coll for coll in bpy.data.collections if len(coll.objects) == 0]
+
+    # Delete empty collections
+    for coll in empty_collections:
+        bpy.data.collections.remove(coll)
+        print(f"Deleted empty collection: {coll.name}")
+
+def delete_unused_materials():
+    """Get all material slots in the scene"""
+    material_slots = set()
+    for obj in bpy.context.scene.objects:
+        if obj.type == 'MESH':
+            for slot in obj.material_slots:
+                material_slots.add(slot.material)
+
+    # Get all materials in the scene
+    materials = set(bpy.data.materials)
+
+    # Find materials that are not used in any material slot
+    unused_materials = materials - material_slots
+
+    # Remove the unused materials
+    for material in unused_materials:
+        bpy.data.materials.remove(material)
+        print(f"Deleted unused material: {material.name}")
+
+def delete_objects_with_property_and_descendants(prop_name="lightmap_remove_on_clean"):
+    """Delete objects with a custom property and their descendants."""
+    # Iterate through all objects in the scene
+    for obj in bpy.context.scene.objects:
+        # Check if the object has the custom property and if it's truthy
+        if prop_name in obj and bool(obj[prop_name]):
+            # Delete the object and its descendants
+            delete_object_and_descendants(obj)
+            print(f"Deleted object and descendants: {obj.name}")
+
+def delete_object_and_descendants(obj):
+    """Delete an object and all its descendants."""
+    # Collect all descendants of the object
+    descendants = get_descendants(obj)
+
+    # Delete the object and its descendants
+    for descendant in descendants:
+        bpy.data.objects.remove(descendant, do_unlink=True)
+    bpy.data.objects.remove(obj, do_unlink=True)
+
+def get_descendants(obj):
+    """Get all descendants of an object."""
+    descendants = []
+    # Recursively find all children and their children
+    for child in obj.children:
+        descendants.append(child)
+        descendants.extend(get_descendants(child))
+    return descendants
+
+def merge_meshes_by_group():
+    # Dictionary to store groups of objects
+    merge_groups = {}
+
+    # Iterate through all objects in the scene
+    for obj in bpy.context.scene.objects:
+        if obj.type == 'MESH' and "merge_group" in obj.keys():
+            # Get the merge_group value
+            group_id = obj["merge_group"]
+
+            # Add the object to the corresponding group
+            if group_id not in merge_groups:
+                merge_groups[group_id] = []
+            merge_groups[group_id].append(obj)
+
+    # Merge objects in each group
+    for group_id, objects in merge_groups.items():
+        if len(objects) > 1:
+            print(f"Merging group {group_id} with {len(objects)} objects")
+
+            # Deselect all objects
+            bpy.ops.object.select_all(action='DESELECT')
+
+            # Select objects in the current group
+            for obj in objects:
+                obj.select_set(True)
+                bpy.context.view_layer.objects.active = obj
+
+            # Join the selected objects
+            bpy.ops.object.join()
+
+            # Rename the merged object (optional)
+            bpy.context.active_object.name = f"Merged_Group_{group_id}"
+        else:
+            print(f"Group {group_id} has only 1 object, skipping merge")
+
+    print("Merge operation complete!")
+
+
 # Main function
 def lightmap_fork():
     save_lightmap_version()
     apply_all_modifiers()
+    rename_C4D_uv()
     delete_invisible_objects()
     delete_curves()
-    rename_C4D_uv()
+    delete_empty_collections()
+    delete_empty_objects()
+    delete_unused_materials()
+    delete_objects_with_property_and_descendants("lightmap_remove_on_clean")
+    merge_meshes_by_group()
 
     print("Lightmap preparation complete!")
 
