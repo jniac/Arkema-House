@@ -110,7 +110,7 @@ def delete_empty_objects():
         print(f"Deleted empty: {empty.name}")
 
 # Main function
-def prepare_for_lightmap_baking():
+def lightmap_fork():
     save_lightmap_version()
     apply_all_modifiers()
     delete_invisible_objects()
@@ -120,4 +120,4 @@ def prepare_for_lightmap_baking():
     print("Lightmap preparation complete!")
 
 # Run the script
-prepare_for_lightmap_baking()
+lightmap_fork()

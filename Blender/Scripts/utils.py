@@ -13,3 +13,14 @@ def apply_parent_inverse():
 # Run the function on selected objects
 apply_parent_inverse()
 print("Parent inverse applied and cleared.")
+
+def add_custom_float_property(obj, prop_name, default_value=0.0, min_value=0.0, max_value=10.0):
+    """Adds a custom float property with range to an object"""
+    bpy.types.Object.my_custom_float = bpy.props(
+        name=prop_name,
+        description="Custom float property",
+        default=default_value,
+        min=min_value,
+        max=max_value
+    )
+    obj[prop_name] = default_value
