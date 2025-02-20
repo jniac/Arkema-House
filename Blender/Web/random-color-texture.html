@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random PNG Generator</title>
+</head>
+
+<body>
+  <button id="generate">Generate Random PNG</button>
+  <a id="download" download="random.png" style="display:none;">Download PNG</a>
+  <canvas id="canvas" width="4096" height="4096" style="display:none;"></canvas>
+
+  <script>
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+    const generateBtn = document.getElementById('generate')
+    const downloadLink = document.getElementById('download')
+
+    generateBtn.addEventListener('click', () => {
+      const width = canvas.width
+      const height = canvas.height
+
+      // Create an ImageData object
+      const imageData = ctx.createImageData(width, height)
+      const data = imageData.data
+
+      // Fill each pixel with a random color
+      for (let i = 0; i < data.length; i += 4) {
+        data[i] = Math.floor(Math.random() * 256)     // R
+        data[i + 1] = Math.floor(Math.random() * 256) // G
+        data[i + 2] = Math.floor(Math.random() * 256) // B
+        data[i + 3] = 255                             // A (fully opaque)
+      }
+
+      // Put the random data onto the canvas
+      ctx.putImageData(imageData, 0, 0)
+
+      // Generate PNG data URL
+      const pngData = canvas.toDataURL('image/png')
+
+      // Set download link
+      downloadLink.href = pngData
+      downloadLink.style.display = 'inline'
+      downloadLink.textContent = 'Download PNG'
+    });
+  </script>
+</body>
+
+</html>
