@@ -90,9 +90,28 @@ def merge_meshes_by_group():
 
     print("Merge operation complete!")
 
+def ensure_lightmap_suffixes():
+    for obj in bpy.context.scene.objects:
+        if obj.type == 'MESH':
+            lightmap = obj.get("lightmap_bake")
+            if lightmap is not None and lightmap > 0:
+                re = r"_LM\d+$"
+                name = obj.name.replace(re, "")
+                obj.name = f"{name}_LM{lightmap}"
+
+def delete_unwanted_uv_layers():
+    for obj in bpy.context.scene.objects:
+        if obj.type == 'MESH':
+            for uv_layer in obj.data.uv_layers:
+                if uv_layer.name != "UVMap" and uv_layer.name != "UVLightmap":
+                    obj.data.uv_layers.remove(uv_layer)
+                    print(f"Deleted UV layer: {uv_layer.name}")
+
+# select(1)
 # set(10)
 # isolate(10)
-# select(10)
 # switchTo(10, 1)
+# set("walls", "merge_group")
+# ensure_lightmap_suffixes()
+# delete_unwanted_uv_layers()
 
-set("walls", "merge_group")
