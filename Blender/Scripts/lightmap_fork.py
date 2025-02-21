@@ -211,7 +211,7 @@ def lightmap_fork():
     delete_empty_collections()
     delete_empty_objects()
     delete_objects_with_property_and_descendants("lightmap_remove_on_clean")
-    merge_meshes_by_group()
+    # merge_meshes_by_group() # Merge created issues (incorrect materials, UVs, etc.)
 
     print("Lightmap preparation complete!")
 

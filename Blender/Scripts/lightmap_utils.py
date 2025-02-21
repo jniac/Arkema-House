@@ -107,6 +107,23 @@ def delete_unwanted_uv_layers():
                     obj.data.uv_layers.remove(uv_layer)
                     print(f"Deleted UV layer: {uv_layer.name}")
 
+def adjust_bevel_modifiers():
+    count = 0
+    # Iterate over all objects in the scene
+    for obj in bpy.data.objects:
+        if obj.type == 'MESH':
+            # Iterate over all modifiers for each object
+            for modifier in obj.modifiers:
+                if modifier.type == 'BEVEL':
+                    # Set segments to 2
+                    modifier.segments = 2
+                    
+                    # Enable Harden Normals
+                    modifier.harden_normals = True
+                    count += 1
+                    
+    print(f"modified: {count} bevel")
+
 # select(1)
 # set(10)
 # isolate(10)

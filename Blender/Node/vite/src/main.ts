@@ -39,8 +39,8 @@ const sunLight = new DirectionalLight('#ffffff', 1)
 sunLight.position.set(-10, 10, 10)
 three.scene.add(sunLight)
 
-// const glbUrl = 'http://127.0.0.1:5500/Blender/Exports/ArkemaHouse_DSN.glb'
-const glbUrl = 'http://127.0.0.1:5500/Blender/Exports/Floor.glb'
+const glbUrl = 'http://127.0.0.1:5500/Blender/Exports/ArkemaHouse_DSN.glb'
+// const glbUrl = 'http://127.0.0.1:5500/Blender/Exports/Floor.glb'
 const gltf = await loadGLTF(glbUrl)
 three.scene.add(gltf.scene)
 
@@ -65,6 +65,10 @@ function associateLightmap(lightmap: Texture, ...meshes: Mesh[]) {
   for (const mesh of meshes) {
     mesh.receiveShadow = true
     mesh.castShadow = true
+
+    console.log(mesh.name)
+    if (mesh.name !== 'Tiles_3')
+      continue
 
     const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
     for (const material of materials) {
