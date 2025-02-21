@@ -29,11 +29,12 @@ def save_lightmap_version():
 
     if re.search(pattern, filepath):
         # Replace existing LIGHTMAP timestamp with new one
-        new_filepath = re.sub(pattern, f"_LIGHTMAP_{timestamp}", filepath)
+        id = ''.join(random.choices(string.ascii_uppercase, k=3))
+        new_filepath = re.sub(pattern, f"_LIGHTMAP_{timestamp}_{id}", filepath)
     else:
         # Append LIGHTMAP_XXX_<TIMESTAMP> if not already in the name
         id = ''.join(random.choices(string.ascii_uppercase, k=3))
-        new_filepath = filepath.replace(".blend", f"_LIGHTMAP_{id}_{timestamp}.blend")
+        new_filepath = filepath.replace(".blend", f"_LIGHTMAP_{timestamp}_{id}.blend")
 
     # Save the new version
     bpy.ops.wm.save_as_mainfile(filepath=new_filepath)
@@ -117,25 +118,6 @@ def delete_empty_collections():
         bpy.data.collections.remove(coll)
         print(f"Deleted empty collection: {coll.name}")
 
-def delete_unused_materials():
-    """Get all material slots in the scene"""
-    material_slots = set()
-    for obj in bpy.context.scene.objects:
-        if obj.type == 'MESH':
-            for slot in obj.material_slots:
-                material_slots.add(slot.material)
-
-    # Get all materials in the scene
-    materials = set(bpy.data.materials)
-
-    # Find materials that are not used in any material slot
-    unused_materials = materials - material_slots
-
-    # Remove the unused materials
-    for material in unused_materials:
-        bpy.data.materials.remove(material)
-        print(f"Deleted unused material: {material.name}")
-
 def delete_objects_with_property_and_descendants(prop_name="lightmap_remove_on_clean"):
     """Delete objects with a custom property and their descendants."""
     # Iterate through all objects in the scene
@@ -181,15 +163,28 @@ def merge_meshes_by_group():
             merge_groups[group_id].append(obj)
 
     # Merge objects in each group
+    
     for group_id, objects in merge_groups.items():
         if len(objects) > 1:
             print(f"Merging group {group_id} with {len(objects)} objects")
 
             # Deselect all objects
             bpy.ops.object.select_all(action='DESELECT')
+            
+            has_common_lightmap_bake = True
+            common_lightmap_bake = -1
 
             # Select objects in the current group
             for obj in objects:
+                current_lightmap_bake = obj.get("lightmap_bake")
+                if current_lightmap_bake is None:
+                    has_common_lightmap_bake = False
+                elif common_lightmap_bake == -1:
+                    common_lightmap_bake = current_lightmap_bake
+                elif common_lightmap_bake != current_lightmap_bake:
+                    has_common_lightmap_bake = False
+                
+                # Select the object
                 obj.select_set(True)
                 bpy.context.view_layer.objects.active = obj
 
@@ -198,6 +193,8 @@ def merge_meshes_by_group():
 
             # Rename the merged object (optional)
             bpy.context.active_object.name = f"Merged_Group_{group_id}"
+            if has_common_lightmap_bake:
+                bpy.context.active_object["lightmap_bake"] = common_lightmap_bake
         else:
             print(f"Group {group_id} has only 1 object, skipping merge")
 
@@ -213,7 +210,6 @@ def lightmap_fork():
     delete_curves()
     delete_empty_collections()
     delete_empty_objects()
-    delete_unused_materials()
     delete_objects_with_property_and_descendants("lightmap_remove_on_clean")
     merge_meshes_by_group()
 
