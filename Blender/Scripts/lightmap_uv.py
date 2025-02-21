@@ -2,8 +2,6 @@ import bpy
 
 # Constants
 LIGHTMAP_UV_NAME = "UVLightmap"
-LIGHTMAP_RESOLUTION = 4096
-LIGHTMAP_IMAGE_NAME = f"Lightmap-{LIGHTMAP_RESOLUTION}"
 
 def ensure_lightmap_uv(mesh_obj):
     uv_layer = mesh_obj.data.uv_layers.get(LIGHTMAP_UV_NAME)
@@ -18,12 +16,12 @@ def ensure_lightmap_uv(mesh_obj):
 
     return uv_layer
 
-def ensure_lightmap_image():
+def ensure_lightmap_image(name, size):
     # Ensure a global image exists for the lightmap
-    image = bpy.data.images.get(LIGHTMAP_IMAGE_NAME)
+    image = bpy.data.images.get(name)
     if image is None:
-        image = bpy.data.images.new(LIGHTMAP_IMAGE_NAME, LIGHTMAP_RESOLUTION, LIGHTMAP_RESOLUTION)
-        print(f"✅ Created lightmap image: {LIGHTMAP_IMAGE_NAME}")
+        image = bpy.data.images.new(name, size, size)
+        print(f"✅ Created lightmap image: {name}")
     return image
 
 def ensure_uv_map_node(material, uv_map_name, x = -400, y = 0):
@@ -45,6 +43,37 @@ def ensure_uv_map_node(material, uv_map_name, x = -400, y = 0):
         print(f"✅ Created UV Map Node for {material.name} → {uv_map_name}")
 
     return uv_map_node
+
+def clear_existing_image_texture_nodes(material):
+    if material is None or not material.use_nodes:
+        print("Material not found or does not use nodes")
+    else:
+        node_tree = material.node_tree
+        nodes = node_tree.nodes
+
+        # Find the UVMap node that uses "UVLightmap"
+        uvmap_node = None
+        for node in nodes:
+            if node.type == 'UVMAP' and getattr(node, "uv_map", None) == LIGHTMAP_UV_NAME:
+                uvmap_node = node
+                break
+
+        if uvmap_node is None:
+            print(f"No UVMap node referencing '{LIGHTMAP_UV_NAME}' found")
+        else:
+            # Collect nodes that are connected to the UVMap node.
+            nodes_to_remove = set()
+            for link in node_tree.links:
+                if link.from_node == uvmap_node:
+                    nodes_to_remove.add(link.to_node)
+                if link.to_node == uvmap_node:
+                    nodes_to_remove.add(link.from_node)
+
+            # Remove each connected node (avoiding removing the UVMap node itself)
+            for node in nodes_to_remove:
+                if node != uvmap_node:
+                    nodes.remove(node)
+            print("Removed nodes connected to the UVMap node.")
 
 def ensure_lightmap_texture_node(material, image, x = -200, y = 0):
     # Ensure a texture node exists and references the lightmap image
@@ -96,16 +125,18 @@ def link_default_uv_node_to_existing_images(material):
 
 def link_lightmap_uv_to_lightmap_image(material, lightmap_image):
     lightmap_uv_node = ensure_uv_map_node(material, LIGHTMAP_UV_NAME, x=-1100, y=400)
+    clear_existing_image_texture_nodes(material)
     tex_node = ensure_lightmap_texture_node(material, lightmap_image, x=-900, y=400)
     link_nodes(material, lightmap_uv_node, tex_node)               
 
 
 # Main function: process all objects
-def process_scene():
-    lightmap_image = ensure_lightmap_image()
+def process_scene(lightmap_image_name = "foo", lightmap_resolution = 4096):
+    lightmap_image = ensure_lightmap_image(lightmap_image_name, lightmap_resolution)
 
     processed_materials = set()
-    for obj in bpy.data.objects:
+    # for obj in bpy.data.objects:
+    for obj in bpy.context.selected_objects:
         if obj.type == 'MESH':
             print(f"🔍 Processing {obj.name}...")
             ensure_lightmap_uv(obj)
@@ -118,6 +149,15 @@ def process_scene():
                     link_default_uv_node_to_existing_images(material)
                     link_lightmap_uv_to_lightmap_image(material, lightmap_image)
 
+
+
+
+
 # Run the script
-process_scene()
+RESOLUTION = 4096
+# IMAGE_NAME = f"ArkemaHouse-Lightmap-{RESOLUTION}-1-Architecture"
+IMAGE_NAME = f"ArkemaHouse-Lightmap-{RESOLUTION}-2-Furniture"
+
+process_scene(IMAGE_NAME, RESOLUTION)
+
 print("✅ Lightmap setup complete for all meshes.")

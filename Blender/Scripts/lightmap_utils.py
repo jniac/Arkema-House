@@ -42,7 +42,7 @@ def isolate(value, prop_name = "lightmap_bake"):
 def select(value = 1, prop_name = "lightmap_bake"):
     bpy.ops.object.select_all(action='DESELECT')
     for obj in bpy.context.scene.objects:
-        if obj.get(prop_name) is value:
+        if obj.type == 'MESH' and obj.get(prop_name) is value:
             obj.select_set(True)
 
 def switchTo(valueSource, valueTarget, prop_name = "lightmap_bake"):
