@@ -1,0 +1,20 @@
+{
+  "name": "vite",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "jniac",
+  "license": "ISC",
+  "dependencies": {
+    "some-utils-dom": "github:jniac/some-utils-dom",
+    "some-utils-three": "github:jniac/some-utils-three",
+    "some-utils-ts": "github:jniac/some-utils-ts"
+  },
+  "devDependencies": {
+    "vite": "^6.1.1"
+  }
+}
