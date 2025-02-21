@@ -106,8 +106,11 @@ def delete_empty_objects():
 
     # Delete collected empties
     for empty in empties_to_delete:
-        bpy.data.objects.remove(empty, do_unlink=True)
-        print(f"Deleted empty: {empty.name}")
+        try:
+            bpy.data.objects.remove(empty, do_unlink=True)
+            print(f"Deleted empty: {empty.name}")
+        except Exception as e:
+            print(f"Failed to delete empty: {empty.name}, {e}")
 
 def delete_empty_collections():
     """Collect and delete empty collections"""
@@ -208,7 +211,6 @@ def lightmap_fork():
     rename_C4D_uv()
     delete_invisible_objects()
     delete_curves()
-    delete_empty_collections()
     delete_empty_objects()
     delete_objects_with_property_and_descendants("lightmap_remove_on_clean")
     # merge_meshes_by_group() # Merge created issues (incorrect materials, UVs, etc.)
