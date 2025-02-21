@@ -24,7 +24,7 @@
 Lightmap 4096x4096
 10:18 -> 10:57 (00:39)
 
-### MaisonArkema
+### MaisonArkema5
 21/02/2025: 
 
 - Lightmap #1 (architecture) 4096x4096  
@@ -33,6 +33,16 @@ Lightmap 4096x4096
 
 - Lightmap #2 (furniture) 4096x4096  
   - 11:06 -> 12:06 (01:00)
+
+### MaisonArkema6
+21/02/2025: 
+
+- Lightmap #1 (architecture) 4096x4096  
+  - ...
+
+
+- Lightmap #2 (furniture) 4096x4096  
+  - ...
 
 ## Debug
 
