@@ -25,5 +25,5 @@ Lightmap 4096x4096
 
 ### MaisonArkema5
 Lightmap #1 (archi) 4096x4096
-09:08 -> ?
+09:20 -> ?
 
