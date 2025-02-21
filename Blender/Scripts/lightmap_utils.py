@@ -3,7 +3,7 @@ import bpy
 LIGHTMAP_UV_NAME = "UVLightmap"
 
 
-def set(value=1, prop_name="lightmap_bake"):
+def setCustom(value=1, prop_name="lightmap_bake"):
     # Determine the property type based on the type of `value`
     if isinstance(value, int):
         prop_type = bpy.props.IntProperty
@@ -287,10 +287,10 @@ resolution = 4096
 # process_selected_objects(f"ArkemaHouse-Lightmap-{resolution}-2-Furniture")
 
 # select(1)
-# set(10)
+# setCustom(10)
 # isolate(10)
 # switchTo(10, 1)
-# set("walls", "merge_group")
+# setCustom("walls", "merge_group")
 # ensure_lightmap_suffixes()
 # delete_unwanted_uv_layers()
 
