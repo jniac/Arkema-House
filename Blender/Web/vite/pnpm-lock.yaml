@@ -17,6 +17,9 @@ importers:
       some-utils-ts:
         specifier: github:jniac/some-utils-ts
         version: https://codeload.github.com/jniac/some-utils-ts/tar.gz/ae768c80cd072092dee6e30710ad53f6eb9fde38
+      three:
+        specifier: ^0.173.0
+        version: 0.173.0
     devDependencies:
       vite:
         specifier: ^6.1.1

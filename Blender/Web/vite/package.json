@@ -12,7 +12,8 @@
   "dependencies": {
     "some-utils-dom": "github:jniac/some-utils-dom",
     "some-utils-three": "github:jniac/some-utils-three",
-    "some-utils-ts": "github:jniac/some-utils-ts"
+    "some-utils-ts": "github:jniac/some-utils-ts",
+    "three": "^0.173.0"
   },
   "devDependencies": {
     "vite": "^6.1.1"

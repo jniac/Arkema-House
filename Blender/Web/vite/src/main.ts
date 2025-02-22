@@ -32,59 +32,68 @@ three.ticker.onTick(tick => {
   knot.rotation.y += 1 * tick.deltaTime
 })
 
-const skyLight = new HemisphereLight('#ffffff', '#00056a', 1)
+const skyLight = new HemisphereLight('#ffffff', '#00056a', .1)
 three.scene.add(skyLight)
 
-const sunLight = new DirectionalLight('#ffffff', 1)
+const sunLight = new DirectionalLight('#ffffff', .5)
 sunLight.position.set(-10, 10, 10)
+sunLight.castShadow = true
+sunLight.shadow.mapSize.set(2048, 2048)
+sunLight.shadow.camera.far = 100
+sunLight.shadow.camera.top = 10
+sunLight.shadow.camera.bottom = -10
+sunLight.shadow.camera.left = -10
+sunLight.shadow.camera.right = 10
+sunLight.shadow.bias = -0.0001
 three.scene.add(sunLight)
 
-// const glbUrl = 'http://127.0.0.1:5500/Blender/Exports/ArkemaHouse_DSN.glb'
-const glbUrl = 'http://127.0.0.1:5500/Blender/Exports/Floor.glb'
+const glbUrl = '/Blender/Exports/ArkemaHouse_WGP.glb'
 const gltf = await loadGLTF(glbUrl)
 three.scene.add(gltf.scene)
 
 Object.assign(window, { three, gltf, controls })
 
-const lightmap1 = await loadLightMap('http://127.0.0.1:5500/Blender/Exports/ArkemaHouse-Lightmap-4096-1-Architecture.png')
+const lightMap1 = await loadLightMap('/Blender/Exports/ArkemaHouse-WGP-Lightmap-4096-1-Arc.png')
+const lightMap2 = await loadLightMap('/Blender/Exports/ArkemaHouse-WGP-Lightmap-4096-2-Fur.png')
 
-const lightmap2 = await loadLightMap('http://127.0.0.1:5500/Blender/Exports/ArkemaHouse-Lightmap-4096-2-Furniture.png')
+const processedMaterials = new Map<Material, Material>()
+function getConvertedMaterial(material: Material, lightMap: Texture) {
+  if (processedMaterials.has(material))
+    return processedMaterials.get(material)!
 
-const processedMaterials = new Set<Material>()
-function associateLightmap(lightmap: Texture, ...meshes: Mesh[]) {
+  const newMaterial = new MeshPhysicalMaterial({
+    color: material['color'],
+    roughnessMap: material['roughnessMap'],
+    map: material['map'],
+    normalMap: material['normalMap'],
+    aoMap: material['aoMap'],
+    lightMap: lightMap,
+    lightMapIntensity: 1,
+  })
+  processedMaterials.set(material, newMaterial)
+
+  return newMaterial
+}
+
+function associateLightMap(lightMap: Texture, ...meshes: Mesh[]) {
   for (const mesh of meshes) {
     mesh.receiveShadow = true
     mesh.castShadow = true
-
-    console.log(mesh.name)
-
     const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
     for (const material of materials) {
-      if (processedMaterials.has(material)) continue
-      processedMaterials.add(material)
-
-      material['lightMap'] = lightmap
-      material.needsUpdate = true
-
-      const newMaterial = new MeshPhysicalMaterial({
-        map: material['map'],
-        normalMap: material['normalMap'],
-        aoMap: material['aoMap'],
-        lightMap: lightmap,
-        lightMapIntensity: 1,
-      })
-
-      mesh.material = newMaterial
+      mesh.material = getConvertedMaterial(material, lightMap)
     }
   }
 }
 
 for (const child of allDescendantsOf(gltf.scene)) {
+  console.log(child.name)
   if (/_LM\d+$/.test(child.name)) {
+    const lightMap = child.name.endsWith('1') ? lightMap1 : lightMap2
     if (child['isMesh']) {
-      associateLightmap(lightmap1, child as Mesh)
+      associateLightMap(lightMap, child as Mesh)
     } else if (child['isGroup']) {
-      associateLightmap(lightmap1, ...[...allDescendantsOf(child)].filter(child => child['isMesh']) as Mesh[])
+      associateLightMap(lightMap, ...[...allDescendantsOf(child)].filter(child => child['isMesh']) as Mesh[])
     }
   }
 }
