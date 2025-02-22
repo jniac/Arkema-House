@@ -38,11 +38,12 @@ Lightmap 4096x4096
 22/02/2025: 
 
 - Lightmap #1 (architecture) 4096x4096
-  - 09:26 -> 09:52 (00:26, samples: @128)
+  - 09:26 -> 09:52 (00:26, @samples: 128)
+  - 10:58 -> ? (?, @samples: 512)
 
 
 - Lightmap #2 (furniture) 4096x4096  
-  - 10:00 -> ? (?, samples: @128)
+  - 10:16 -> 10:44 (00:28, @samples: 128)
 
 ## Debug
 

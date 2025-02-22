@@ -247,9 +247,9 @@ def link_default_uv_node_to_existing_images(material):
                 print(f"🔗 Linked UV Map Node to Image Texture: {node.name}")
 
 def link_lightmap_uv_to_lightmap_image(material, lightmap_image):
-    lightmap_uv_node = ensure_uv_map_node(material, LIGHTMAP_UV_NAME, x=-1100, y=400)
+    lightmap_uv_node = ensure_uv_map_node(material, LIGHTMAP_UV_NAME, x=-1400, y=400)
     clear_existing_image_texture_nodes(material)
-    tex_node = ensure_lightmap_texture_node(material, lightmap_image, x=-900, y=400)
+    tex_node = ensure_lightmap_texture_node(material, lightmap_image, x=-1200, y=400)
     link_nodes(material, lightmap_uv_node, tex_node)               
 
 
@@ -281,10 +281,10 @@ def process_selected_objects(lightmap_image_name = "foo", lightmap_resolution = 
 resolution = 4096
 
 # select(1)
-# process_selected_objects(f"ArkemaHouse-Lightmap-{resolution}-1-Arc")
+# process_selected_objects(f"ArkemaHouse-Lightmap-{resolution}-1-Arc", resolution)
 
 # select(2)
-# process_selected_objects(f"ArkemaHouse-Lightmap-{resolution}-2-Fur")
+# process_selected_objects(f"ArkemaHouse-Lightmap-{resolution}-2-Fur", resolution)
 
 # select(1)
 # setCustom(10)
