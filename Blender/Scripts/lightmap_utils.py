@@ -276,6 +276,8 @@ def process_selected_objects(lightmap_image_name = "foo", lightmap_resolution = 
 
 
 
+
+
 # Run the script
 resolution = 4096
 id = 'WGP'
@@ -296,3 +298,4 @@ samples = 512
 
 ensure_lightmap_suffixes()
 
+bpy.context.scene.cycles.samples = samples
