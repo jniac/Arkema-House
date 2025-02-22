@@ -284,10 +284,10 @@ id = 'WGP'
 samples = 512
 
 # select(1)
-# process_selected_objects(f"ArkemaHouse-{id}-Lightmap-{resolution}-1-Arc-@{samples}", resolution)
+# process_selected_objects(f"ArkemaHouse6-{id}-LM1-@{samples}", resolution)
 
 # select(2)
-# process_selected_objects(f"ArkemaHouse-{id}-Lightmap-{resolution}-2-Fur-@{samples}", resolution)
+# process_selected_objects(f"ArkemaHouse6-{id}-LM2-@{samples}", resolution)
 
 # select(1)
 # setCustom(10)

@@ -1,4 +1,4 @@
-import { DirectionalLight, HemisphereLight, Material, Mesh, MeshPhysicalMaterial, Texture, TorusKnotGeometry } from 'three'
+import { DirectionalLight, HemisphereLight, Material, Mesh, MeshStandardMaterial, Texture, TorusKnotGeometry } from 'three'
 
 import { VertigoControls } from 'some-utils-three/camera/vertigo/controls'
 import { ThreeWebGLContext } from 'some-utils-three/experimental/contexts/webgl'
@@ -35,7 +35,7 @@ three.ticker.onTick(tick => {
 const skyLight = new HemisphereLight('#ffffff', '#00056a', .1)
 three.scene.add(skyLight)
 
-const sunLight = new DirectionalLight('#ffffff', .5)
+const sunLight = new DirectionalLight('#ffffff', .1)
 sunLight.position.set(-10, 10, 10)
 sunLight.castShadow = true
 sunLight.shadow.mapSize.set(2048, 2048)
@@ -47,28 +47,27 @@ sunLight.shadow.camera.right = 10
 sunLight.shadow.bias = -0.0001
 three.scene.add(sunLight)
 
-const glbUrl = '/Blender/Exports/ArkemaHouse_WGP.glb'
-const gltf = await loadGLTF(glbUrl)
+Object.assign(window, { three, controls })
+
+const gltf = await loadGLTF('/Blender/Exports/ArkemaHouse6/ArkemaHouse6-WGP.glb')
 three.scene.add(gltf.scene)
 
-Object.assign(window, { three, gltf, controls })
-
-const lightMap1 = await loadLightMap('/Blender/Exports/ArkemaHouse-WGP-Lightmap-4096-1-Arc.png')
-const lightMap2 = await loadLightMap('/Blender/Exports/ArkemaHouse-WGP-Lightmap-4096-2-Fur.png')
+const lightMap1 = await loadLightMap('/Blender/Exports/ArkemaHouse6/ArkemaHouse6-WGP-LM1-@512.png')
+const lightMap2 = await loadLightMap('/Blender/Exports/ArkemaHouse6/ArkemaHouse6-WGP-LM2-@512.png')
 
 const processedMaterials = new Map<Material, Material>()
 function getConvertedMaterial(material: Material, lightMap: Texture) {
   if (processedMaterials.has(material))
     return processedMaterials.get(material)!
 
-  const newMaterial = new MeshPhysicalMaterial({
+  const newMaterial = new MeshStandardMaterial({
     color: material['color'],
     roughnessMap: material['roughnessMap'],
     map: material['map'],
     normalMap: material['normalMap'],
     aoMap: material['aoMap'],
     lightMap: lightMap,
-    lightMapIntensity: 1,
+    lightMapIntensity: 2,
   })
   processedMaterials.set(material, newMaterial)
 
@@ -87,7 +86,6 @@ function associateLightMap(lightMap: Texture, ...meshes: Mesh[]) {
 }
 
 for (const child of allDescendantsOf(gltf.scene)) {
-  console.log(child.name)
   if (/_LM\d+$/.test(child.name)) {
     const lightMap = child.name.endsWith('1') ? lightMap1 : lightMap2
     if (child['isMesh']) {
