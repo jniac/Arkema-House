@@ -281,10 +281,10 @@ def process_selected_objects(lightmap_image_name = "foo", lightmap_resolution = 
 resolution = 4096
 
 # select(1)
-# process_selected_objects(f"ArkemaHouse-Lightmap-{resolution}-1-Architecture")
+# process_selected_objects(f"ArkemaHouse-Lightmap-{resolution}-1-Arc")
 
 # select(2)
-# process_selected_objects(f"ArkemaHouse-Lightmap-{resolution}-2-Furniture")
+# process_selected_objects(f"ArkemaHouse-Lightmap-{resolution}-2-Fur")
 
 # select(1)
 # setCustom(10)
