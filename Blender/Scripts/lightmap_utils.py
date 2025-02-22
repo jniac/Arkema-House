@@ -279,12 +279,14 @@ def process_selected_objects(lightmap_image_name = "foo", lightmap_resolution = 
 
 # Run the script
 resolution = 4096
+id = 'WGP'
+samples = 512
 
 # select(1)
-# process_selected_objects(f"ArkemaHouse-Lightmap-{resolution}-1-Arc", resolution)
+# process_selected_objects(f"ArkemaHouse-{id}-Lightmap-{resolution}-1-Arc-@{samples}", resolution)
 
 # select(2)
-# process_selected_objects(f"ArkemaHouse-Lightmap-{resolution}-2-Fur", resolution)
+# process_selected_objects(f"ArkemaHouse-{id}-Lightmap-{resolution}-2-Fur-@{samples}", resolution)
 
 # select(1)
 # setCustom(10)
