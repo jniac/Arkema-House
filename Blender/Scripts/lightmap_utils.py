@@ -96,9 +96,8 @@ def ensure_lightmap_suffixes():
     for obj in bpy.context.scene.objects:
         if obj.type == 'MESH':
             lightmap = obj.get("lightmap_bake")
+            name = obj.name.replace(r"_LM\d+$", "")
             if lightmap is not None and lightmap > 0:
-                re = r"_LM\d+$"
-                name = obj.name.replace(re, "")
                 obj.name = f"{name}_LM{lightmap}"
 
 def delete_unwanted_uv_layers():
@@ -293,6 +292,7 @@ samples = 512
 # isolate(10)
 # switchTo(10, 1)
 # setCustom("walls", "merge_group")
-# ensure_lightmap_suffixes()
 # delete_unwanted_uv_layers()
+
+ensure_lightmap_suffixes()
 
