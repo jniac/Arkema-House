@@ -1,3 +1,5 @@
+import re
+
 import bpy
 
 LIGHTMAP_UV_NAME = "UVLightmap"
@@ -96,7 +98,7 @@ def ensure_lightmap_suffixes():
     for obj in bpy.context.scene.objects:
         if obj.type == 'MESH':
             lightmap = obj.get("lightmap_bake")
-            name = obj.name.replace(r"_LM\d+$", "")
+            name =  re.sub(r"(_LM\d+)+$", "", obj.name)
             if lightmap is not None and lightmap > 0:
                 obj.name = f"{name}_LM{lightmap}"
 
