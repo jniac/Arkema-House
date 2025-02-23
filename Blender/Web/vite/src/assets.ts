@@ -1,9 +1,9 @@
-import { DataTexture, NearestFilter, NoColorSpace, PMREMGenerator, RepeatWrapping, RGBAFormat, Texture, TextureLoader, UnsignedByteType, WebGLRenderer } from 'three'
+import { DataTexture, NearestFilter, PMREMGenerator, RepeatWrapping, RGBAFormat, SRGBColorSpace, Texture, TextureLoader, UnsignedByteType, WebGLRenderer } from 'three'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 
-const host = 'http://127.0.0.1:5500'
+const host = 'http://localhost:4001'
 
 const textureLoader = new TextureLoader()
 const rgbeLoader = new RGBELoader()
@@ -51,7 +51,7 @@ export async function loadLightMap(url: string, {
 } = {}): Promise<Texture> {
   const texture = await loadTexture(url)
   texture.flipY = false
-  texture.colorSpace = NoColorSpace
+  texture.colorSpace = SRGBColorSpace
   texture.generateMipmaps = false
   texture.channel = uvChannel
   return texture
