@@ -18,6 +18,12 @@
 - Clean "C4D Arkema FBX wrapper" (the 1 / 100 scale caused problems in lightmap meshes scale / weight) 
 - Added "Arkema green ground" for baking reflections
 
+### MaisonArkema6
+- Clean chair meshes (7884 vertices removed!)
+- Fix normals
+- Fix material lightmap fight (one material per lightmap)
+- Fix missing wall in lightmap
+
 ## Render time
 
 ### MaisonArkema4
@@ -40,6 +46,7 @@ Lightmap 4096x4096
 - Lightmap #1 (architecture) 4096x4096
   - 09:26 -> 09:52 (00:26, @samples: 128)
   - 10:58 -> ? (?, @samples: 512)
+  - 16:35 -> ? (?, @samples: 512)
 
 
 - Lightmap #2 (furniture) 4096x4096  
