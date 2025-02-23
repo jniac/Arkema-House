@@ -1,11 +1,17 @@
-import { DirectionalLight, Group, Material, Mesh, MeshStandardMaterial, Object3D, PointLight, PointLightHelper, Texture, VSMShadowMap } from 'three'
+import "@fontsource/inter"
+import { BackSide, DirectionalLight, FrontSide, IcosahedronGeometry, Material, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D, Texture, VSMShadowMap } from 'three'
 
 import { VertigoControls } from 'some-utils-three/camera/vertigo/controls'
 import { ThreeWebGLContext } from 'some-utils-three/experimental/contexts/webgl'
-import { allAncestorsOf, allDescendantsOf } from 'some-utils-three/utils/tree'
+import { ShaderForge, vec3 } from 'some-utils-three/shader-forge'
+import { allAncestorsOf, allDescendantsOf, setup } from 'some-utils-three/utils/tree'
+import { glsl_easings } from 'some-utils-ts/glsl/easings'
+import { glsl_stegu_snoise } from 'some-utils-ts/glsl/stegu-snoise'
+import { glsl_utils } from 'some-utils-ts/glsl/utils'
 
 import { initAssets, loadEnvMap, loadGLTF, loadLightMap, whiteTexture } from './assets'
 import { debugKnot } from './debugKnot'
+import { pointLights } from './pointLights'
 
 const three = new ThreeWebGLContext()
 three.initialize(document.body)
@@ -32,7 +38,7 @@ three.ticker.onTick(tick => {
   controls.update(three.camera, three.aspect, tick.deltaTime)
 })
 
-const sun = new DirectionalLight('#ffffff', 1)
+const sun = new DirectionalLight('#ffffff', 2)
 sun.position.set(-20, 40, -10)
 sun.castShadow = true
 sun.shadow.intensity = 1.25
@@ -43,46 +49,40 @@ sun.shadow.camera.bottom = -20
 sun.shadow.camera.left = -20
 sun.shadow.camera.right = 20
 sun.shadow.bias = -0.0001
-sun.shadow.radius = 12
+sun.shadow.radius = 5
 three.scene.add(sun)
 
-function pointLights({
-  debug = false,
-} = {}) {
-  const group = new Group()
+three.scene.add(pointLights().group)
 
-  const parentRoom = new PointLight('#fff8e5', 15, 0, 2)
-  parentRoom.position.set(5, 2, -6)
-  group.add(parentRoom)
-
-  const kitchen = new PointLight('#fff8e5', 10, 0, 2)
-  kitchen.position.set(0, 2.5, -5)
-  group.add(kitchen)
-
-  const bathroom = new PointLight('#fff8e5', 5, 0, 2)
-  bathroom.position.set(1.5, 2, -1)
-  group.add(bathroom)
-
-  const childRoom = new PointLight('#fff8e5', 10, 0, 2)
-  childRoom.position.set(2, 2.5, 3)
-  group.add(childRoom)
-
-  const garage = new PointLight('#f2e5ff', 5, 0, 2)
-  garage.position.set(5.5, 2.5, 2.5)
-  group.add(garage)
-
-  if (debug) {
-    group.add(...group.children.map(child => {
-      return new PointLightHelper(child as PointLight)
-    }))
-  }
-
-  return {
-    group,
-  }
+function arkemaSky() {
+  const sky = new Mesh(new IcosahedronGeometry(100, 2), new MeshBasicMaterial({
+    color: 'red',
+    side: BackSide,
+  }))
+  setup(sky, {
+    rotation: ['-40deg', '0deg', '0'],
+  })
+  sky.material.onBeforeCompile = shader => ShaderForge.with(shader)
+    .varying({
+      vObjectPosition: 'vec3',
+    })
+    .vertex.mainBeforeAll(/* glsl */`
+      vObjectPosition = position;
+    `)
+    .fragment.top(
+      glsl_utils,
+      glsl_easings,
+      glsl_stegu_snoise,
+    )
+    .fragment.after('color_fragment', /* glsl */`
+      float x = inverseLerp(-66.0, 66.0, vObjectPosition.y);
+      x += snoise(vObjectPosition.xyz * 12.445678) * .025;
+      diffuseColor.rgb = mix(${vec3('#06AEA7')}, ${vec3('#034C5F')}, easeInOut3(x));
+    `)
+  return sky
 }
 
-three.scene.add(pointLights().group)
+three.scene.add(arkemaSky())
 
 const envMap = await loadEnvMap('/Blender/Assets/kloofendal_43d_clear_puresky_4k.hdr')
 three.scene.environment = envMap
@@ -95,9 +95,10 @@ three.scene.add(gltf.scene)
 
 const lightMap1 = await loadLightMap('/Blender/Exports/ArkemaHouse6/ArkemaHouse6-KOK-LM1-@512.png')
 const lightMap2 = await loadLightMap('/Blender/Exports/ArkemaHouse6/ArkemaHouse6-KOK-LM2-@512.png')
+const aoMap1 = await loadLightMap('/Blender/Exports/ArkemaHouse6/ArkemaHouse6-KOK-AO1-@512.png')
 
 const processedMaterials = new Map<Material, Material>()
-function getConvertedMaterial(material: Material, lightMap: Texture, {
+function getConvertedMaterial(material: Material, aoMap: Texture, lightMap: Texture, {
   debug = false,
 } = {}) {
   if (processedMaterials.has(material))
@@ -107,17 +108,20 @@ function getConvertedMaterial(material: Material, lightMap: Texture, {
     ? () => {
       const newMaterial = new MeshStandardMaterial({
         color: '#000000',
-        emissive: '#808080',
-        emissiveMap: lightMap,
+        emissive: '#ffffff',
+        emissiveMap: aoMap,
       })
       return newMaterial
     }
     : () => {
       const newMaterial = (material as MeshStandardMaterial).clone()
       newMaterial.defines = { USE_LIGHTMAP: '' }
+      newMaterial.aoMap = aoMap
+      newMaterial.aoMapIntensity = 0
       newMaterial.lightMap = lightMap
-      newMaterial.lightMapIntensity = .8
+      newMaterial.lightMapIntensity = 1.1
       newMaterial.normalScale.setScalar(1.25)
+      newMaterial.side = FrontSide
       return newMaterial
     })()
 
@@ -126,13 +130,13 @@ function getConvertedMaterial(material: Material, lightMap: Texture, {
   return newMaterial
 }
 
-function associateLightMap(lightMap: Texture, ...meshes: Mesh[]) {
+function associateMaps(aoMap: Texture, lightMap: Texture, ...meshes: Mesh[]) {
   for (const mesh of meshes) {
     mesh.receiveShadow = true
     mesh.castShadow = true
     const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
     for (const material of materials) {
-      mesh.material = getConvertedMaterial(material, lightMap)
+      mesh.material = getConvertedMaterial(material, aoMap, lightMap)
     }
   }
 }
@@ -153,9 +157,10 @@ for (const child of allDescendantsOf(gltf.scene)) {
     const index = getLightMapIndex(child)
     // console.log(mesh.name, index)
     const lightMap = [whiteTexture, lightMap1, lightMap2][index]
+    const aoMap = [whiteTexture, aoMap1, whiteTexture][index]
     mesh.receiveShadow = true
     mesh.castShadow = true
-    associateLightMap(lightMap, mesh)
+    associateMaps(aoMap, lightMap, mesh)
   }
 }
 

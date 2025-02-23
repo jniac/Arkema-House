@@ -10,6 +10,10 @@ body {
   height: 100vh;
 }
 
+body {
+  font-family: "Inter";
+}
+
 canvas {
   position: absolute;
   inset: 0;
@@ -22,4 +26,9 @@ canvas {
   flex-direction: column;
   padding: 2em;
   z-index: 1;
+}
+
+h1 {
+  font-size: 2em;
+  color: white;
 }
