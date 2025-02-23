@@ -9,14 +9,14 @@ importers:
   .:
     dependencies:
       some-utils-dom:
-        specifier: github:jniac/some-utils-dom
-        version: https://codeload.github.com/jniac/some-utils-dom/tar.gz/eb36926551fe9f400ace997749a030351a72aaa0(some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/ae768c80cd072092dee6e30710ad53f6eb9fde38)
+        specifier: file:/Users/joseph/Documents/Work/Moi/some-utils-x/some-utils-dom
+        version: file:../../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts)
       some-utils-three:
-        specifier: github:jniac/some-utils-three
-        version: https://codeload.github.com/jniac/some-utils-three/tar.gz/121d751d2376c4084f3b491aef6204f1f8057ebd(some-utils-dom@https://codeload.github.com/jniac/some-utils-dom/tar.gz/eb36926551fe9f400ace997749a030351a72aaa0(some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/ae768c80cd072092dee6e30710ad53f6eb9fde38))(some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/ae768c80cd072092dee6e30710ad53f6eb9fde38)(three@0.173.0)
+        specifier: file:/Users/joseph/Documents/Work/Moi/some-utils-x/some-utils-three
+        version: file:../../../../../../Moi/some-utils-x/some-utils-three(some-utils-dom@file:../../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts))(some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts)(three@0.173.0)
       some-utils-ts:
-        specifier: github:jniac/some-utils-ts
-        version: https://codeload.github.com/jniac/some-utils-ts/tar.gz/ae768c80cd072092dee6e30710ad53f6eb9fde38
+        specifier: file:/Users/joseph/Documents/Work/Moi/some-utils-x/some-utils-ts
+        version: file:../../../../../../Moi/some-utils-x/some-utils-ts
       three:
         specifier: ^0.173.0
         version: 0.173.0
@@ -302,23 +302,20 @@ packages:
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
-  some-utils-dom@https://codeload.github.com/jniac/some-utils-dom/tar.gz/eb36926551fe9f400ace997749a030351a72aaa0:
-    resolution: {tarball: https://codeload.github.com/jniac/some-utils-dom/tar.gz/eb36926551fe9f400ace997749a030351a72aaa0}
-    version: 1.0.0
+  some-utils-dom@file:../../../../../../Moi/some-utils-x/some-utils-dom:
+    resolution: {directory: ../../../../../../Moi/some-utils-x/some-utils-dom, type: directory}
     peerDependencies:
       some-utils-ts: github:jniac/some-utils-ts
 
-  some-utils-three@https://codeload.github.com/jniac/some-utils-three/tar.gz/121d751d2376c4084f3b491aef6204f1f8057ebd:
-    resolution: {tarball: https://codeload.github.com/jniac/some-utils-three/tar.gz/121d751d2376c4084f3b491aef6204f1f8057ebd}
-    version: 1.0.0
+  some-utils-three@file:../../../../../../Moi/some-utils-x/some-utils-three:
+    resolution: {directory: ../../../../../../Moi/some-utils-x/some-utils-three, type: directory}
     peerDependencies:
       some-utils-dom: github:jniac/some-utils-dom
       some-utils-ts: github:jniac/some-utils-ts
       three: '>=0.172.0'
 
-  some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/ae768c80cd072092dee6e30710ad53f6eb9fde38:
-    resolution: {tarball: https://codeload.github.com/jniac/some-utils-ts/tar.gz/ae768c80cd072092dee6e30710ad53f6eb9fde38}
-    version: 1.0.0
+  some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts:
+    resolution: {directory: ../../../../../../Moi/some-utils-x/some-utils-ts, type: directory}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -569,17 +566,17 @@ snapshots:
       '@rollup/rollup-win32-x64-msvc': 4.34.8
       fsevents: 2.3.3
 
-  some-utils-dom@https://codeload.github.com/jniac/some-utils-dom/tar.gz/eb36926551fe9f400ace997749a030351a72aaa0(some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/ae768c80cd072092dee6e30710ad53f6eb9fde38):
+  some-utils-dom@file:../../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts):
     dependencies:
-      some-utils-ts: https://codeload.github.com/jniac/some-utils-ts/tar.gz/ae768c80cd072092dee6e30710ad53f6eb9fde38
+      some-utils-ts: file:../../../../../../Moi/some-utils-x/some-utils-ts
 
-  some-utils-three@https://codeload.github.com/jniac/some-utils-three/tar.gz/121d751d2376c4084f3b491aef6204f1f8057ebd(some-utils-dom@https://codeload.github.com/jniac/some-utils-dom/tar.gz/eb36926551fe9f400ace997749a030351a72aaa0(some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/ae768c80cd072092dee6e30710ad53f6eb9fde38))(some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/ae768c80cd072092dee6e30710ad53f6eb9fde38)(three@0.173.0):
+  some-utils-three@file:../../../../../../Moi/some-utils-x/some-utils-three(some-utils-dom@file:../../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts))(some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts)(three@0.173.0):
     dependencies:
-      some-utils-dom: https://codeload.github.com/jniac/some-utils-dom/tar.gz/eb36926551fe9f400ace997749a030351a72aaa0(some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/ae768c80cd072092dee6e30710ad53f6eb9fde38)
-      some-utils-ts: https://codeload.github.com/jniac/some-utils-ts/tar.gz/ae768c80cd072092dee6e30710ad53f6eb9fde38
+      some-utils-dom: file:../../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts)
+      some-utils-ts: file:../../../../../../Moi/some-utils-x/some-utils-ts
       three: 0.173.0
 
-  some-utils-ts@https://codeload.github.com/jniac/some-utils-ts/tar.gz/ae768c80cd072092dee6e30710ad53f6eb9fde38: {}
+  some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts: {}
 
   source-map-js@1.2.1: {}
 

@@ -1,51 +1,54 @@
-import { DirectionalLight, HemisphereLight, Material, Mesh, MeshStandardMaterial, Texture, TorusKnotGeometry } from 'three'
+import { DirectionalLight, Material, Mesh, MeshStandardMaterial, Object3D, Texture, VSMShadowMap } from 'three'
 
 import { VertigoControls } from 'some-utils-three/camera/vertigo/controls'
 import { ThreeWebGLContext } from 'some-utils-three/experimental/contexts/webgl'
-import { LineHelper } from 'some-utils-three/helpers/line'
-import { AutoLitMaterial } from 'some-utils-three/materials/auto-lit'
-import { allDescendantsOf } from 'some-utils-three/utils/tree'
+import { allAncestorsOf, allDescendantsOf } from 'some-utils-three/utils/tree'
 
-import { loadGLTF, loadLightMap } from './loaders'
+import { initAssets, loadEnvMap, loadGLTF, loadLightMap, whiteTexture } from './assets'
+import { debugKnot } from './debugKnot'
 
 const three = new ThreeWebGLContext()
 three.initialize(document.body)
 
-const knot = new Mesh(new TorusKnotGeometry(1, .45, 512, 128), new AutoLitMaterial({ color: 'red' }))
-three.scene.add(knot)
+initAssets(three.renderer)
 
-const cube = new LineHelper()
-  .color('black')
-  .box({ size: 3.6 })
-  .draw()
-three.scene.add(cube)
+three.renderer.shadowMap.enabled = true
+three.renderer.shadowMap.type = VSMShadowMap
+
+if (false) {
+  three.scene.add(debugKnot())
+}
 
 const controls = new VertigoControls({
-  size: 12,
-  rotation: ['-45deg', '-30deg', '0'],
+  size: 24,
+  focus: [-1, 4.75, -.75],
+  rotation: ['-40deg', '-40deg', '0'],
+  perspective: .5,
 })
   .initialize(document.body)
   .start()
 
 three.ticker.onTick(tick => {
   controls.update(three.camera, three.aspect, tick.deltaTime)
-  knot.rotation.y += 1 * tick.deltaTime
 })
 
-const skyLight = new HemisphereLight('#ffffff', '#00056a', .1)
-three.scene.add(skyLight)
+const sun = new DirectionalLight('#ffffff', 1)
+sun.position.set(-10, 40, 10)
+sun.castShadow = true
+sun.shadow.intensity = 1.25
+sun.shadow.mapSize.set(4096, 4096)
+sun.shadow.camera.far = 100
+sun.shadow.camera.top = 20
+sun.shadow.camera.bottom = -20
+sun.shadow.camera.left = -20
+sun.shadow.camera.right = 20
+sun.shadow.bias = -0.0001
+sun.shadow.radius = 25
+three.scene.add(sun)
 
-const sunLight = new DirectionalLight('#ffffff', .1)
-sunLight.position.set(-10, 10, 10)
-sunLight.castShadow = true
-sunLight.shadow.mapSize.set(2048, 2048)
-sunLight.shadow.camera.far = 100
-sunLight.shadow.camera.top = 10
-sunLight.shadow.camera.bottom = -10
-sunLight.shadow.camera.left = -10
-sunLight.shadow.camera.right = 10
-sunLight.shadow.bias = -0.0001
-three.scene.add(sunLight)
+const envMap = await loadEnvMap('/Blender/Assets/kloofendal_43d_clear_puresky_4k.hdr')
+three.scene.environment = envMap
+three.scene.environmentIntensity = .25
 
 Object.assign(window, { three, controls })
 
@@ -60,15 +63,11 @@ function getConvertedMaterial(material: Material, lightMap: Texture) {
   if (processedMaterials.has(material))
     return processedMaterials.get(material)!
 
-  const newMaterial = new MeshStandardMaterial({
-    color: material['color'],
-    roughnessMap: material['roughnessMap'],
-    map: material['map'],
-    normalMap: material['normalMap'],
-    aoMap: material['aoMap'],
-    lightMap: lightMap,
-    lightMapIntensity: 2,
-  })
+  const newMaterial = (material as MeshStandardMaterial).clone()
+  // newMaterial.defines = { USE_LIGHTMAP: '' }
+  newMaterial.lightMap = lightMap
+  newMaterial.lightMapIntensity = .8
+  newMaterial.normalScale.setScalar(1.25)
   processedMaterials.set(material, newMaterial)
 
   return newMaterial
@@ -85,13 +84,30 @@ function associateLightMap(lightMap: Texture, ...meshes: Mesh[]) {
   }
 }
 
-for (const child of allDescendantsOf(gltf.scene)) {
-  if (/_LM\d+$/.test(child.name)) {
-    const lightMap = child.name.endsWith('1') ? lightMap1 : lightMap2
-    if (child['isMesh']) {
-      associateLightMap(lightMap, child as Mesh)
-    } else if (child['isGroup']) {
-      associateLightMap(lightMap, ...[...allDescendantsOf(child)].filter(child => child['isMesh']) as Mesh[])
+function getLightMapIndex(child: Object3D) {
+  for (const parent of allAncestorsOf(child, { includeSelf: true, root: gltf.scene })) {
+    const match = parent.name.match(/_LM(\d+)$/)
+    if (match) {
+      return Number(match[1])
     }
   }
+  return 0
 }
+
+for (const child of allDescendantsOf(gltf.scene)) {
+  if (child['isMesh']) {
+    const index = getLightMapIndex(child)
+    const lightMap = [whiteTexture, lightMap1, lightMap2][index]
+    const mesh = child as Mesh
+    mesh.receiveShadow = true
+    mesh.castShadow = true
+    associateLightMap(lightMap, mesh)
+  }
+}
+
+const stage = {
+  sun,
+  gltf,
+}
+
+Object.assign(window, { stage })
