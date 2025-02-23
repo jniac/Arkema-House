@@ -51,6 +51,7 @@ Lightmap 4096x4096
 
 - Lightmap #2 (furniture) 4096x4096  
   - 10:16 -> 10:44 (00:28, @samples: 128)
+  - 21:35 -> 23:XX (?, @samples: 512)
 
 ## Debug
 
