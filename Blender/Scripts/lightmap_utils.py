@@ -217,6 +217,8 @@ def ensure_lightmap_texture_node(material, image, x = -200, y = 0):
         tex_node.location = (x, y)
         print(f"✅ Created Texture Node for {material.name} → {image.name}")
 
+    tex_node.width = 300
+    
     # Set the texture node as the active one for baking
     material.node_tree.nodes.active = tex_node
     print(f"🎯 Selected texture node for {material.name} → {image.name}")

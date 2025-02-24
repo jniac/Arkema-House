@@ -1,4 +1,20 @@
 /**
+ * Returns the material type of the node.
+ * @param {import('@gltf-transform/core').Node} node
+ * @returns {'none' | 'lm1' | 'lm2'}
+ */
+function getMaterialType(node) {
+  let scope = node
+  while (scope) {
+    if (/_LM\d+/.test(scope.getName())) {
+      return `lm${scope.getName().match(/_LM(\d+)/)[1]}`
+    }
+    scope = scope.getParentNode()
+  }
+  return 'none'
+}
+
+/**
  *
  * @param {import('@gltf-transform/core').Document} document
  */
@@ -18,10 +34,8 @@ export function buildMaterialMaps(document) {
    * @param {import('@gltf-transform/core').Material} material
    */
   function registerMaterial(node, material) {
-    const materialType = /_LM\d+/.test(node.getName())
-      ? `lm${node.getName().match(/_LM(\d+)/)[1]}`
-      : 'none'
-    const map = materials[materialType]
+    const type = getMaterialType(node)
+    const map = materials[type]
     if (!map.has(material)) {
       map.set(material, new Set())
     }
