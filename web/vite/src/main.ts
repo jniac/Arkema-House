@@ -13,6 +13,9 @@ import { initAssets, loadEnvMap, loadGLTF, loadLightMap, whiteTexture } from './
 import { debugKnot } from './debugKnot'
 import { pointLights } from './pointLights'
 
+// @ts-ignore
+const production = /true|1/.test(import.meta?.env?.VITE_PRODUCTION)
+
 async function main() {
   const three = new ThreeWebGLContext()
   three.initialize(document.body)
@@ -91,13 +94,17 @@ async function main() {
 
   Object.assign(window, { three, controls })
 
-  const gltf = await loadGLTF('assets/arkema-house/ArkemaHouse6-KOK-webp.glb')
+  const prefix = production
+    ? `/Arkema-House/output`
+    : 'http://localhost:4001/output'
+
+  const gltf = await loadGLTF(`${prefix}/ArkemaHouse6-KOK-webp.glb`)
   three.scene.add(gltf.scene)
 
-  const lightMap1 = await loadLightMap('assets/arkema-house/ArkemaHouse6-KOK-LM1-@512.png')
-  const lightMap2 = await loadLightMap('assets/arkema-house/ArkemaHouse6-KOK-LM2-@512.png')
-  const aoMap1 = await loadLightMap('assets/arkema-house/ArkemaHouse6-KOK-AO1-@512.png')
-  const aoMap2 = await loadLightMap('assets/arkema-house/ArkemaHouse6-KOK-AO2-@512.png')
+  const lightMap1 = await loadLightMap(`${prefix}/ArkemaHouse6-KOK-LM1-@512.png`)
+  const lightMap2 = await loadLightMap(`${prefix}/ArkemaHouse6-KOK-LM2-@512.png`)
+  const aoMap1 = await loadLightMap(`${prefix}/ArkemaHouse6-KOK-AO1-@512.png`)
+  const aoMap2 = await loadLightMap(`${prefix}/ArkemaHouse6-KOK-AO2-@512.png`)
 
   const processedMaterials = new Map<Material, Material>()
   function getConvertedMaterial(material: Material, aoMap: Texture, lightMap: Texture, {

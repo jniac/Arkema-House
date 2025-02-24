@@ -3,7 +3,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 
-const host = ''
+let base = ''
 
 const textureLoader = new TextureLoader()
 const rgbeLoader = new RGBELoader()
@@ -36,13 +36,13 @@ gltfLoader.setDRACOLoader(dracoLoader)
 
 export async function loadGLTF(url: string): Promise<GLTF> {
   return new Promise((resolve, reject) => {
-    gltfLoader.load(host + url, resolve, undefined, reject)
+    gltfLoader.load(base + url, resolve, undefined, reject)
   })
 }
 
 export async function loadTexture(url: string): Promise<Texture> {
   return new Promise((resolve, reject) => {
-    textureLoader.load(host + url, resolve, undefined, reject)
+    textureLoader.load(base + url, resolve, undefined, reject)
   })
 }
 
@@ -59,7 +59,7 @@ export async function loadLightMap(url: string, {
 
 export async function loadEnvMap(url: string): Promise<Texture> {
   return new Promise((resolve, reject) => {
-    rgbeLoader.load(host + url, texture => {
+    rgbeLoader.load(base + url, texture => {
       const envMap = getPremGenerator().fromEquirectangular(texture).texture
       texture.dispose()
       resolve(envMap)

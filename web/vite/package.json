@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "vite --port=4000",
+    "dev": "node scripts/dev.mjs",
     "build": "vite build"
   },
   "keywords": [],
@@ -19,6 +19,7 @@
     "three": "^0.173.0"
   },
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "express": "^4.21.2",
     "vite": "^6.1.1"
   }
