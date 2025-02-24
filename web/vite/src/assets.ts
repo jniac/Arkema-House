@@ -10,7 +10,7 @@ const rgbeLoader = new RGBELoader()
 const gltfLoader = new GLTFLoader()
 
 const dracoLoader = new DRACOLoader()
-  .setDecoderPath('/assets/draco/')
+  .setDecoderPath('./assets/draco/')
   .preload()
 
 let _renderer: WebGLRenderer | null = null

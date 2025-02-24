@@ -14,7 +14,6 @@ import { debugKnot } from './debugKnot'
 import { pointLights } from './pointLights'
 
 async function main() {
-
   const three = new ThreeWebGLContext()
   three.initialize(document.body)
 
@@ -86,19 +85,19 @@ async function main() {
 
   three.scene.add(arkemaSky())
 
-  const envMap = await loadEnvMap('/assets/kloofendal_43d_clear_puresky_4k.hdr')
+  const envMap = await loadEnvMap('assets/kloofendal_43d_clear_puresky_4k.hdr')
   three.scene.environment = envMap
   three.scene.environmentIntensity = .25
 
   Object.assign(window, { three, controls })
 
-  const gltf = await loadGLTF('/assets/arkema-house/ArkemaHouse6-KOK-webp.glb')
+  const gltf = await loadGLTF('assets/arkema-house/ArkemaHouse6-KOK-webp.glb')
   three.scene.add(gltf.scene)
 
-  const lightMap1 = await loadLightMap('/assets/arkema-house/ArkemaHouse6-KOK-LM1-@512.png')
-  const lightMap2 = await loadLightMap('/assets/arkema-house/ArkemaHouse6-KOK-LM2-@512.png')
-  const aoMap1 = await loadLightMap('/assets/arkema-house/ArkemaHouse6-KOK-AO1-@512.png')
-  const aoMap2 = await loadLightMap('/assets/arkema-house/ArkemaHouse6-KOK-AO2-@512.png')
+  const lightMap1 = await loadLightMap('assets/arkema-house/ArkemaHouse6-KOK-LM1-@512.png')
+  const lightMap2 = await loadLightMap('assets/arkema-house/ArkemaHouse6-KOK-LM2-@512.png')
+  const aoMap1 = await loadLightMap('assets/arkema-house/ArkemaHouse6-KOK-AO1-@512.png')
+  const aoMap2 = await loadLightMap('assets/arkema-house/ArkemaHouse6-KOK-AO2-@512.png')
 
   const processedMaterials = new Map<Material, Material>()
   function getConvertedMaterial(material: Material, aoMap: Texture, lightMap: Texture, {
