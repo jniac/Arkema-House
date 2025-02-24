@@ -27,6 +27,9 @@ importers:
       '@types/bytes':
         specifier: ^3.1.5
         version: 3.1.5
+      '@types/draco3dgltf':
+        specifier: ^1.4.3
+        version: 1.4.3
 
 packages:
 
@@ -149,6 +152,12 @@ packages:
 
   '@types/bytes@3.1.5':
     resolution: {integrity: sha512-VgZkrJckypj85YxEsEavcMmmSOIzkUHqWmM4CCyia5dc54YwsXzJ5uT4fYxBQNEXx+oF1krlhgCbvfubXqZYsQ==}
+
+  '@types/draco3d@1.4.10':
+    resolution: {integrity: sha512-AX22jp8Y7wwaBgAixaSvkoG4M/+PlAcm3Qs4OW8yT9DM4xUpWKeFhLueTAyZF39pviAdcDdeJoACapiAceqNcw==}
+
+  '@types/draco3dgltf@1.4.3':
+    resolution: {integrity: sha512-JTY574f8xRI9+bOsDajeVSQ/gnIo0q3dt/MAJhNRKWJKdH2TAP3hld+lQ+eQnG9Eb6Ae493EiKi2oDZZpciQgw==}
 
   '@types/ndarray@1.0.14':
     resolution: {integrity: sha512-oANmFZMnFQvb219SSBIhI1Ih/r4CvHDOzkWyJS/XRqkMrGH5/kaPSA1hQhdIBzouaE+5KpE/f5ylI9cujmckQg==}
@@ -327,6 +336,12 @@ snapshots:
     optional: true
 
   '@types/bytes@3.1.5': {}
+
+  '@types/draco3d@1.4.10': {}
+
+  '@types/draco3dgltf@1.4.3':
+    dependencies:
+      '@types/draco3d': 1.4.10
 
   '@types/ndarray@1.0.14': {}
 

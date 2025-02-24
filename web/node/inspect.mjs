@@ -1,14 +1,23 @@
-import { NodeIO } from '@gltf-transform/core'
 import bytes from 'bytes'
+import path from 'path'
 
-const io = new NodeIO()
-const document = await io.read('Blender/Exports/MaisonArkema4_JNC_LIGHTMAP_VGJ_20250219_203424.glb')
+import { buildMaterialMaps } from './tools/buildMaterialMaps.mjs'
+import { io } from './tools/io.mjs'
+
+const input = path.join(import.meta.dirname, '../../output/ArkemaHouse6-KOK-merge.glb')
+
+const document = await io.read(input)
 
 // Inspect buffers
 document.getRoot().listBuffers().forEach((buffer, index) => {
   console.log(`Buffer ${index}: ${buffer}`)
   // console.log(buffer)
 })
+
+console.log(`materials: ${document.getRoot().listMaterials().length}`)
+console.log(`meshes: ${document.getRoot().listMeshes().length}`)
+
+console.log(buildMaterialMaps(document).info())
 
 // Inspect images (textures)
 let textureByteLength = 0

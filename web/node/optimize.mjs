@@ -1,26 +1,37 @@
-import { NodeIO } from '@gltf-transform/core'
-import { ALL_EXTENSIONS } from '@gltf-transform/extensions'
 import { join } from '@gltf-transform/functions'
-import draco3d from 'draco3dgltf'
 
-// Configure I/O.
-const io = new NodeIO()
-  .registerExtensions(ALL_EXTENSIONS)
-  .registerDependencies({
-    'draco3d.decoder': await draco3d.createDecoderModule(), // Optional.
-    'draco3d.encoder': await draco3d.createEncoderModule(), // Optional.
-  })
+import { buildMaterialMaps } from './tools/buildMaterialMaps.mjs'
+import { io } from './tools/io.mjs'
 
+const entries = [
+  {
+    input: '../../output/ArkemaHouse6-KOK.glb',
+    output: '../../output/ArkemaHouse6-KOK-merge.glb',
+  },
+  {
+    input: '../../output/ArkemaHouse6-KOK-webp.glb',
+    output: '../../output/ArkemaHouse6-KOK-webp-merge.glb',
+  }
+]
 
-const inputFile = '../../output/ArkemaHouse6-KOK.glb'
-const outputFile = '../../output/ArkemaHouse6-KOK-merge.glb'
+for (const { input, output } of entries) {
+  const document = await io.read(input)
 
-const document = await io.read(inputFile)
+  await document.transform(
+    join({ perMaterial: true })
+  )
 
-await document.transform(
-  join({ perMaterial: true })
-)
+  const materialMaps = buildMaterialMaps(document)
 
-io.write(outputFile, document)
+  for (const [materialType, map] of Object.entries(materialMaps.materials)) {
+    const suffix = materialType === 'none' ? '' : `_${materialType.toUpperCase()}`
+    for (const material of map.keys()) {
+      const newName = material.getName().replace(/_LM\d+/g, '') + suffix
+      material.setName(newName)
+    }
+  }
 
-console.log(`Meshes merged by material and saved to ${outputFile}`)
+  io.write(output, document)
+
+  console.log(`Meshes merged by material and saved to ${output}`)
+}
