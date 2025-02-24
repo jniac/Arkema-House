@@ -13,7 +13,7 @@ export function pointLights({
   kitchen.position.set(0, 2.25, -6)
   group.add(kitchen)
 
-  const bathroom = new PointLight('#fff8e5', 5, 0, 2)
+  const bathroom = new PointLight('#e5fdff', 2.5, 0, 2)
   bathroom.position.set(1.5, 2, -1)
   group.add(bathroom)
 

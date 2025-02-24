@@ -16,6 +16,7 @@
 			"**/.DS_Store": true,
 			"**/Thumbs.db": true,
 			"**/*.blend1": true,
-		}
+		},
+		"liveServer.settings.multiRootWorkspaceName": "Arkema-House"
 	}
 }

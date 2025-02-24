@@ -19,13 +19,13 @@ importers:
         version: 14.2.4
       some-utils-dom:
         specifier: file:/Users/joseph/Documents/Work/Moi/some-utils-x/some-utils-dom
-        version: file:../../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts)
+        version: file:../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../Moi/some-utils-x/some-utils-ts)
       some-utils-three:
         specifier: file:/Users/joseph/Documents/Work/Moi/some-utils-x/some-utils-three
-        version: file:../../../../../../Moi/some-utils-x/some-utils-three(some-utils-dom@file:../../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts))(some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts)(three@0.173.0)
+        version: file:../../../../../Moi/some-utils-x/some-utils-three(some-utils-dom@file:../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../Moi/some-utils-x/some-utils-ts))(some-utils-ts@file:../../../../../Moi/some-utils-x/some-utils-ts)(three@0.173.0)
       some-utils-ts:
         specifier: file:/Users/joseph/Documents/Work/Moi/some-utils-x/some-utils-ts
-        version: file:../../../../../../Moi/some-utils-x/some-utils-ts
+        version: file:../../../../../Moi/some-utils-x/some-utils-ts
       three:
         specifier: ^0.173.0
         version: 0.173.0
@@ -620,20 +620,20 @@ packages:
   signal-exit@3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
 
-  some-utils-dom@file:../../../../../../Moi/some-utils-x/some-utils-dom:
-    resolution: {directory: ../../../../../../Moi/some-utils-x/some-utils-dom, type: directory}
+  some-utils-dom@file:../../../../../Moi/some-utils-x/some-utils-dom:
+    resolution: {directory: ../../../../../Moi/some-utils-x/some-utils-dom, type: directory}
     peerDependencies:
       some-utils-ts: github:jniac/some-utils-ts
 
-  some-utils-three@file:../../../../../../Moi/some-utils-x/some-utils-three:
-    resolution: {directory: ../../../../../../Moi/some-utils-x/some-utils-three, type: directory}
+  some-utils-three@file:../../../../../Moi/some-utils-x/some-utils-three:
+    resolution: {directory: ../../../../../Moi/some-utils-x/some-utils-three, type: directory}
     peerDependencies:
       some-utils-dom: github:jniac/some-utils-dom
       some-utils-ts: github:jniac/some-utils-ts
       three: '>=0.172.0'
 
-  some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts:
-    resolution: {directory: ../../../../../../Moi/some-utils-x/some-utils-ts, type: directory}
+  some-utils-ts@file:../../../../../Moi/some-utils-x/some-utils-ts:
+    resolution: {directory: ../../../../../Moi/some-utils-x/some-utils-ts, type: directory}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -1255,17 +1255,17 @@ snapshots:
 
   signal-exit@3.0.7: {}
 
-  some-utils-dom@file:../../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts):
+  some-utils-dom@file:../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../Moi/some-utils-x/some-utils-ts):
     dependencies:
-      some-utils-ts: file:../../../../../../Moi/some-utils-x/some-utils-ts
+      some-utils-ts: file:../../../../../Moi/some-utils-x/some-utils-ts
 
-  some-utils-three@file:../../../../../../Moi/some-utils-x/some-utils-three(some-utils-dom@file:../../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts))(some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts)(three@0.173.0):
+  some-utils-three@file:../../../../../Moi/some-utils-x/some-utils-three(some-utils-dom@file:../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../Moi/some-utils-x/some-utils-ts))(some-utils-ts@file:../../../../../Moi/some-utils-x/some-utils-ts)(three@0.173.0):
     dependencies:
-      some-utils-dom: file:../../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts)
-      some-utils-ts: file:../../../../../../Moi/some-utils-x/some-utils-ts
+      some-utils-dom: file:../../../../../Moi/some-utils-x/some-utils-dom(some-utils-ts@file:../../../../../Moi/some-utils-x/some-utils-ts)
+      some-utils-ts: file:../../../../../Moi/some-utils-x/some-utils-ts
       three: 0.173.0
 
-  some-utils-ts@file:../../../../../../Moi/some-utils-x/some-utils-ts: {}
+  some-utils-ts@file:../../../../../Moi/some-utils-x/some-utils-ts: {}
 
   source-map-js@1.2.1: {}
 

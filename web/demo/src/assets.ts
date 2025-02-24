@@ -3,7 +3,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 
-const host = 'http://localhost:4001'
+const host = ''
 
 const textureLoader = new TextureLoader()
 const rgbeLoader = new RGBELoader()
