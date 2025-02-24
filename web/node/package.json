@@ -1,5 +1,5 @@
 {
-  "name": "Arkema-House",
+  "name": "arkema-house-node",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,7 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "@gltf-transform/core": "^4.1.1",
-    "bytes": "^3.1.2"
+    "@gltf-transform/extensions": "^4.1.1",
+    "@gltf-transform/functions": "^4.1.1",
+    "bytes": "^3.1.2",
+    "draco3dgltf": "^1.5.7"
   },
   "devDependencies": {
     "@types/bytes": "^3.1.5"
