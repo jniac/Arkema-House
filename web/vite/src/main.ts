@@ -15,6 +15,7 @@ import { pointLights } from './pointLights'
 
 // @ts-ignore
 const production = /true|1/.test(import.meta?.env?.VITE_PRODUCTION)
+console.log(`production: ${production}`)
 
 async function main() {
   const three = new ThreeWebGLContext()
