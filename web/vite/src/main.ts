@@ -1,10 +1,10 @@
 import "@fontsource/inter"
-import { BackSide, DirectionalLight, FrontSide, IcosahedronGeometry, Material, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D, Texture, VSMShadowMap } from 'three'
+import { BackSide, DirectionalLight, FrontSide, IcosahedronGeometry, Material, Mesh, MeshBasicMaterial, Object3D, VSMShadowMap } from 'three'
 
 import { VertigoControls } from 'some-utils-three/camera/vertigo/controls'
 import { ThreeWebGLContext } from 'some-utils-three/experimental/contexts/webgl'
 import { ShaderForge, vec3 } from 'some-utils-three/shader-forge'
-import { allAncestorsOf, allDescendantsOf, queryDescendantsOf, setup } from 'some-utils-three/utils/tree'
+import { allDescendantsOf, queryDescendantsOf, setup } from 'some-utils-three/utils/tree'
 import { glsl_easings } from 'some-utils-ts/glsl/easings'
 import { glsl_stegu_snoise } from 'some-utils-ts/glsl/stegu-snoise'
 import { glsl_utils } from 'some-utils-ts/glsl/utils'
@@ -60,15 +60,16 @@ async function main() {
   const sun = new DirectionalLight('#ffffff', 2)
   sun.position.set(-20, 30, -10)
   sun.castShadow = true
-  sun.shadow.intensity = .5
+  sun.shadow.intensity = .66
   sun.shadow.mapSize.set(4096, 4096)
+  const size = 10
   sun.shadow.camera.far = 100
-  sun.shadow.camera.top = 20
-  sun.shadow.camera.bottom = -20
-  sun.shadow.camera.left = -20
-  sun.shadow.camera.right = 20
-  sun.shadow.bias = -.000001
-  sun.shadow.radius = 25
+  sun.shadow.camera.top = size
+  sun.shadow.camera.bottom = -size
+  sun.shadow.camera.left = -size
+  sun.shadow.camera.right = size
+  sun.shadow.bias = -.00001
+  sun.shadow.radius = 10
   three.scene.add(sun)
 
   three.scene.add(pointLights().group)
@@ -113,7 +114,7 @@ async function main() {
     ? `/Arkema-House/output`
     : 'http://localhost:4001/output'
 
-  const gltf = await loadGLTF(`${prefix}/ArkemaHouse6-LYX-merge.glb`)
+  const gltf = await loadGLTF(`${prefix}/ArkemaHouse6-LYX-webp-merge.glb`)
   three.scene.add(gltf.scene)
 
   const lightMap1 = await loadLightMap(`${prefix}/ArkemaHouse6-LYX-LM1-@512.png`)
@@ -125,86 +126,20 @@ async function main() {
 
   const materials = getAllMaterials(gltf.scene)
   for (const material of materials) {
-    if (material.name.includes('_LM1')) {
-      material['lightMap'] = lightMap1
-      material['lightMapIntensity'] = 1
-      material['side'] = FrontSide
-    }
+    const lightMap =
+      material.name.includes('_LM1') ? lightMap1 :
+        material.name.includes('_LM2') ? lightMap2 :
+          whiteTexture
+
+    material['lightMap'] = lightMap
+    material['lightMapIntensity'] = 1
+    material['side'] = FrontSide
   }
 
   const meshes = [...queryDescendantsOf(gltf.scene, child => !!child['isMesh'])] as Mesh[]
   for (const mesh of meshes) {
     mesh.receiveShadow = true
     mesh.castShadow = true
-  }
-
-  return
-
-  const processedMaterials = new Map<Material, Material>()
-  function getConvertedMaterial(material: Material, aoMap: Texture, lightMap: Texture, {
-    debug = false,
-  } = {}) {
-    if (processedMaterials.has(material))
-      return processedMaterials.get(material)!
-
-    const newMaterial = (debug
-      ? () => {
-        const newMaterial = new MeshStandardMaterial({
-          color: '#000000',
-          emissive: '#ffffff',
-          emissiveMap: aoMap,
-        })
-        return newMaterial
-      }
-      : () => {
-        const newMaterial = (material as MeshStandardMaterial).clone()
-        newMaterial.defines = { USE_LIGHTMAP: '' }
-        newMaterial.aoMap = aoMap
-        newMaterial.aoMapIntensity = .33
-        newMaterial.lightMap = lightMap
-        newMaterial.lightMapIntensity = 1
-        newMaterial.normalScale.setScalar(1.25)
-        newMaterial.side = FrontSide
-        return newMaterial
-      })()
-
-    processedMaterials.set(material, newMaterial)
-
-    return newMaterial
-  }
-
-  function associateMaps(aoMap: Texture, lightMap: Texture, ...meshes: Mesh[]) {
-    for (const mesh of meshes) {
-      mesh.receiveShadow = true
-      mesh.castShadow = true
-      const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
-      for (const material of materials) {
-        mesh.material = getConvertedMaterial(material, aoMap, lightMap)
-      }
-    }
-  }
-
-  function getLightMapIndex(child: Object3D) {
-    for (const parent of allAncestorsOf(child, { includeSelf: true, root: gltf.scene })) {
-      const match = parent.name.match(/_LM(\d+)$/)
-      if (match) {
-        return Number(match[1])
-      }
-    }
-    return 0
-  }
-
-  for (const child of allDescendantsOf(gltf.scene)) {
-    if (child['isMesh']) {
-      const mesh = child as Mesh
-      const index = getLightMapIndex(child)
-      console.log(mesh.name, index)
-      const lightMap = [whiteTexture, lightMap1, lightMap2][index]
-      const aoMap = [whiteTexture, aoMap1, aoMap2][index]
-      mesh.receiveShadow = true
-      mesh.castShadow = true
-      associateMaps(aoMap, lightMap, mesh)
-    }
   }
 
   const stage = {
