@@ -10,8 +10,8 @@ import { glsl_stegu_snoise } from 'some-utils-ts/glsl/stegu-snoise'
 import { glsl_utils } from 'some-utils-ts/glsl/utils'
 
 import { initAssets, loadEnvMap, loadGLTF, loadLightMap, whiteTexture } from './assets'
-import { debugKnot } from './debugKnot'
-import { pointLights } from './pointLights'
+import { debugKnot } from './debug-knot'
+import { pointLights } from './point-lights'
 
 // @ts-ignore
 const production = /true|1/.test(import.meta?.env?.VITE_PRODUCTION)
