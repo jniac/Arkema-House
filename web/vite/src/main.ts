@@ -57,10 +57,10 @@ async function main() {
     controls.update(three.camera, three.aspect, tick.deltaTime)
   })
 
-  const sun = new DirectionalLight('#ffffff', 2)
+  const sun = new DirectionalLight('#ffffff', 1)
   sun.position.set(-20, 30, -10)
   sun.castShadow = true
-  sun.shadow.intensity = .66
+  sun.shadow.intensity = .33
   sun.shadow.mapSize.set(4096, 4096)
   const size = 10
   sun.shadow.camera.far = 100
@@ -106,7 +106,7 @@ async function main() {
 
   const envMap = await loadEnvMap('assets/kloofendal_43d_clear_puresky_4k.hdr')
   three.scene.environment = envMap
-  three.scene.environmentIntensity = .25
+  three.scene.environmentIntensity = .33
 
   Object.assign(window, { three, controls })
 
@@ -119,25 +119,40 @@ async function main() {
 
   const lightMap1 = await loadLightMap(`${prefix}/ArkemaHouse6-LYX-LM1-@512.png`)
   const lightMap2 = await loadLightMap(`${prefix}/ArkemaHouse6-LYX-LM2-@512.png`)
-  // const aoMap1 = await loadLightMap(`${prefix}/ArkemaHouse6-KOK-AO1-@512.png`)
-  // const aoMap2 = await loadLightMap(`${prefix}/ArkemaHouse6-KOK-AO2-@512.png`)
-  const aoMap1 = whiteTexture
-  const aoMap2 = whiteTexture
 
   const materials = getAllMaterials(gltf.scene)
+  const newMaterials = new Map<Material, Material>()
   for (const material of materials) {
     const lightMap =
       material.name.includes('_LM1') ? lightMap1 :
         material.name.includes('_LM2') ? lightMap2 :
           whiteTexture
 
-    material['lightMap'] = lightMap
-    material['lightMapIntensity'] = 1
-    material['side'] = FrontSide
+    const debug = false
+
+    if (debug) {
+      const newMaterial = new MeshBasicMaterial({
+        map: lightMap,
+        side: FrontSide,
+      })
+      newMaterials.set(material, newMaterial)
+    }
+
+    else {
+      const newMaterial = material.clone()
+      newMaterial['lightMap'] = lightMap
+      newMaterial['lightMapIntensity'] = 1
+      material['side'] = FrontSide
+      newMaterials.set(material, newMaterial)
+    }
   }
 
   const meshes = [...queryDescendantsOf(gltf.scene, child => !!child['isMesh'])] as Mesh[]
   for (const mesh of meshes) {
+    mesh.material = Array.isArray(mesh.material)
+      ? mesh.material.map(material => newMaterials.get(material)!)
+      : newMaterials.get(mesh.material)!
+
     mesh.receiveShadow = true
     mesh.castShadow = true
   }
