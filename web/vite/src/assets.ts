@@ -3,7 +3,18 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 
-let base = ''
+import { loading } from './loading'
+
+const development = /localhost|127.0.0.1/.test(window.location.host)
+console.log(`development: ${development}`)
+
+const outputPrefix = development
+  ? 'http://localhost:4001/output/'
+  : `/Arkema-House/output/`
+
+const assetsPrefix = development
+  ? 'http://localhost:4001/web/vite/public/'
+  : ``
 
 const textureLoader = new TextureLoader()
 const rgbeLoader = new RGBELoader()
@@ -36,13 +47,15 @@ gltfLoader.setDRACOLoader(dracoLoader)
 
 export async function loadGLTF(url: string): Promise<GLTF> {
   return new Promise((resolve, reject) => {
-    gltfLoader.load(base + url, resolve, undefined, reject)
+    loading.set(`loading ${url} ...`)
+    gltfLoader.load(outputPrefix + url, resolve, undefined, reject)
   })
 }
 
 export async function loadTexture(url: string): Promise<Texture> {
   return new Promise((resolve, reject) => {
-    textureLoader.load(base + url, resolve, undefined, reject)
+    loading.set(`loading ${url} ...`)
+    textureLoader.load(outputPrefix + url, resolve, undefined, reject)
   })
 }
 
@@ -59,7 +72,8 @@ export async function loadLightMap(url: string, {
 
 export async function loadEnvMap(url: string): Promise<Texture> {
   return new Promise((resolve, reject) => {
-    rgbeLoader.load(base + url, texture => {
+    rgbeLoader.load(assetsPrefix + url, texture => {
+      loading.set(`loading ${url} ...`)
       const envMap = getPremGenerator().fromEquirectangular(texture).texture
       texture.dispose()
       resolve(envMap)

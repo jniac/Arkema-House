@@ -11,11 +11,8 @@ import { glsl_utils } from 'some-utils-ts/glsl/utils'
 
 import { initAssets, loadEnvMap, loadGLTF, loadLightMap, whiteTexture } from './assets'
 import { debugKnot } from './debug-knot'
+import { loading } from './loading'
 import { pointLights } from './point-lights'
-
-// @ts-ignore
-const development = /localhost|127.0.0.1/.test(window.location.host)
-console.log(`development: ${development}`)
 
 function getAllMaterials(object: Object3D) {
   const materials = new Set<Material>()
@@ -110,15 +107,11 @@ async function main() {
 
   Object.assign(window, { three, controls })
 
-  const prefix = development
-    ? 'http://localhost:4001/output'
-    : `/Arkema-House/output`
-
-  const gltf = await loadGLTF(`${prefix}/ArkemaHouse6-LYX-webp-merge.glb`)
+  const gltf = await loadGLTF('ArkemaHouse6-LYX-webp-merge.glb')
   three.scene.add(gltf.scene)
 
-  const lightMap1 = await loadLightMap(`${prefix}/ArkemaHouse6-LYX-LM1-@512.png`)
-  const lightMap2 = await loadLightMap(`${prefix}/ArkemaHouse6-LYX-LM2-@512.png`)
+  const lightMap1 = await loadLightMap('ArkemaHouse6-LYX-LM1-@512.png')
+  const lightMap2 = await loadLightMap('ArkemaHouse6-LYX-LM2-@512.png')
 
   const materials = getAllMaterials(gltf.scene)
   const newMaterials = new Map<Material, Material>()
@@ -164,7 +157,7 @@ async function main() {
 
   Object.assign(window, { stage })
 
-  document.querySelector('.loading')!.remove()
+  loading.remove()
 }
 
 main()
