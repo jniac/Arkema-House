@@ -33,7 +33,7 @@ function getAllMaterials(object: Object3D) {
 
 async function main() {
   const three = new ThreeWebGLContext()
-  three.initialize(document.body)
+  three.initialize(document.querySelector('.canvas-wrapper')!)
 
   initAssets(three.renderer)
 
@@ -163,6 +163,8 @@ async function main() {
   }
 
   Object.assign(window, { stage })
+
+  document.querySelector('.loading')!.remove()
 }
 
 main()
