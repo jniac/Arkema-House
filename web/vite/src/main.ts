@@ -14,8 +14,8 @@ import { debugKnot } from './debug-knot'
 import { pointLights } from './point-lights'
 
 // @ts-ignore
-const production = /true|1/.test(import.meta?.env?.VITE_PRODUCTION)
-console.log(`production: ${production}`)
+const development = /localhost|127.0.0.1/.test(window.location.host)
+console.log(`development: ${development}`)
 
 function getAllMaterials(object: Object3D) {
   const materials = new Set<Material>()
@@ -110,9 +110,9 @@ async function main() {
 
   Object.assign(window, { three, controls })
 
-  const prefix = production
-    ? `/Arkema-House/output`
-    : 'http://localhost:4001/output'
+  const prefix = development
+    ? 'http://localhost:4001/output'
+    : `/Arkema-House/output`
 
   const gltf = await loadGLTF(`${prefix}/ArkemaHouse6-LYX-webp-merge.glb`)
   three.scene.add(gltf.scene)
