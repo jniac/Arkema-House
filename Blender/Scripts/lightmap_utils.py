@@ -5,6 +5,13 @@ import bpy
 LIGHTMAP_UV_NAME = "UVLightmap"
 
 
+def is_ascii(s):
+    try:
+        s.encode('ascii')
+        return True
+    except UnicodeEncodeError:
+        return False
+    
 def setCustom(value=1, prop_name="lightmap_bake"):
     # Determine the property type based on the type of `value`
     if isinstance(value, int):
@@ -276,7 +283,20 @@ def process_selected_objects(lightmap_image_name = "foo", lightmap_resolution = 
                     link_lightmap_uv_to_lightmap_image(material, lightmap_image)
 
     print("✅ process_selected_objects completed") 
+    
+def apply_all_modifiers(objs):
+    for obj in objs[:]:
+        if obj.type == 'MESH':
+            bpy.ops.object.mode_set(mode='OBJECT')
+            bpy.ops.object.select_all(action='DESELECT')
+            obj.select_set(True)
+            bpy.context.view_layer.objects.active = obj
 
+            for modifier in obj.modifiers:
+                try:
+                    bpy.ops.object.modifier_apply(modifier=modifier.name)
+                except RuntimeError as e:
+                    print(f"Failed to apply modifier '{modifier.name}' on '{obj.name}': {e}")
 
 
 
@@ -284,14 +304,15 @@ def process_selected_objects(lightmap_image_name = "foo", lightmap_resolution = 
 
 # Run the script
 resolution = 4096
-id = 'WGP'
+file_id = 'LYX'
 samples = 512
 
-# select(1)
-# process_selected_objects(f"ArkemaHouse6-{id}-LM1-@{samples}", resolution)
+lm_id = 0
+if lm_id > 0:
+    select(lm_id)
+    process_selected_objects(f"ArkemaHouse6-{file_id}-LM{lm_id}-@{samples}", resolution)
 
-# select(2)
-# process_selected_objects(f"ArkemaHouse6-{id}-LM2-@{samples}", resolution)
+# apply_all_modifiers(bpy.context.selected_objects)
 
 # select(1)
 # setCustom(10)
