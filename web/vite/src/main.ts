@@ -112,6 +112,7 @@ async function main() {
 
   const lightMap1 = await loadLightMap('ArkemaHouse6-LYX-LM1-@512.png')
   const lightMap2 = await loadLightMap('ArkemaHouse6-LYX-LM2-@512.png')
+  const lightMap3 = await loadLightMap('ArkemaHouse6-LYX-LM3-@512.png')
 
   const materials = getAllMaterials(gltf.scene)
   const newMaterials = new Map<Material, Material>()
@@ -119,9 +120,10 @@ async function main() {
     const lightMap =
       material.name.includes('_LM1') ? lightMap1 :
         material.name.includes('_LM2') ? lightMap2 :
-          whiteTexture
+          material.name.includes('_LM3') ? lightMap3 :
+            whiteTexture
 
-    const debug = false
+    const debug = !false
 
     if (debug) {
       const newMaterial = new MeshBasicMaterial({
