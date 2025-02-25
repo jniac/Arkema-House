@@ -26,6 +26,8 @@ export function buildMaterialMaps(document) {
     lm1: new Map(),
     /** @type {Map<import('@gltf-transform/core').Material, import('@gltf-transform/core').Node>} */
     lm2: new Map(),
+    /** @type {Map<import('@gltf-transform/core').Material, import('@gltf-transform/core').Node>} */
+    lm3: new Map(),
   }
 
   /**
@@ -35,6 +37,9 @@ export function buildMaterialMaps(document) {
    */
   function registerMaterial(node, material) {
     const type = getMaterialType(node)
+    if (!materials[type]) {
+      throw new Error(`Unknown material type: ${type}`)
+    }
     const map = materials[type]
     if (!map.has(material)) {
       map.set(material, new Set())
@@ -56,9 +61,15 @@ export function buildMaterialMaps(document) {
 
   return {
     materials,
+    infoShort() {
+      return 'materials by type: \n' + Object.entries(materials).map(([type, map]) => `  ${type}: ${map.size}`).join('\n')
+    },
     info() {
       const lines = []
       for (const [materialType, map] of Object.entries(materials)) {
+        if (lines.length > 0) {
+          lines.push('')
+        }
         lines.push(`type: ${materialType} (${map.size})`)
         for (const [material, nodes] of map.entries()) {
           lines.push(`  ${material.getName()} (${nodes.size})`)

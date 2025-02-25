@@ -4,7 +4,7 @@ import { BackSide, DirectionalLight, FrontSide, IcosahedronGeometry, Material, M
 import { VertigoControls } from 'some-utils-three/camera/vertigo/controls'
 import { ThreeWebGLContext } from 'some-utils-three/experimental/contexts/webgl'
 import { ShaderForge, vec3 } from 'some-utils-three/shader-forge'
-import { allAncestorsOf, allDescendantsOf, setup } from 'some-utils-three/utils/tree'
+import { allAncestorsOf, allDescendantsOf, queryDescendantsOf, setup } from 'some-utils-three/utils/tree'
 import { glsl_easings } from 'some-utils-ts/glsl/easings'
 import { glsl_stegu_snoise } from 'some-utils-ts/glsl/stegu-snoise'
 import { glsl_utils } from 'some-utils-ts/glsl/utils'
@@ -16,6 +16,20 @@ import { pointLights } from './pointLights'
 // @ts-ignore
 const production = /true|1/.test(import.meta?.env?.VITE_PRODUCTION)
 console.log(`production: ${production}`)
+
+function getAllMaterials(object: Object3D) {
+  const materials = new Set<Material>()
+  for (const child of allDescendantsOf(object)) {
+    if (child['isMesh']) {
+      const mesh = child as Mesh
+      const meshMaterials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+      for (const material of meshMaterials) {
+        materials.add(material)
+      }
+    }
+  }
+  return Array.from(materials)
+}
 
 async function main() {
   const three = new ThreeWebGLContext()
@@ -44,17 +58,17 @@ async function main() {
   })
 
   const sun = new DirectionalLight('#ffffff', 2)
-  sun.position.set(-20, 40, -10)
+  sun.position.set(-20, 30, -10)
   sun.castShadow = true
-  sun.shadow.intensity = 1.25
+  sun.shadow.intensity = .5
   sun.shadow.mapSize.set(4096, 4096)
   sun.shadow.camera.far = 100
   sun.shadow.camera.top = 20
   sun.shadow.camera.bottom = -20
   sun.shadow.camera.left = -20
   sun.shadow.camera.right = 20
-  sun.shadow.bias = -0.0001
-  sun.shadow.radius = 5
+  sun.shadow.bias = -.000001
+  sun.shadow.radius = 25
   three.scene.add(sun)
 
   three.scene.add(pointLights().group)
@@ -99,13 +113,32 @@ async function main() {
     ? `/Arkema-House/output`
     : 'http://localhost:4001/output'
 
-  const gltf = await loadGLTF(`${prefix}/ArkemaHouse6-KOK-webp.glb`)
+  const gltf = await loadGLTF(`${prefix}/ArkemaHouse6-LYX-merge.glb`)
   three.scene.add(gltf.scene)
 
-  const lightMap1 = await loadLightMap(`${prefix}/ArkemaHouse6-KOK-LM1-@512.png`)
-  const lightMap2 = await loadLightMap(`${prefix}/ArkemaHouse6-KOK-LM2-@512.png`)
-  const aoMap1 = await loadLightMap(`${prefix}/ArkemaHouse6-KOK-AO1-@512.png`)
-  const aoMap2 = await loadLightMap(`${prefix}/ArkemaHouse6-KOK-AO2-@512.png`)
+  const lightMap1 = await loadLightMap(`${prefix}/ArkemaHouse6-LYX-LM1-@512.png`)
+  const lightMap2 = await loadLightMap(`${prefix}/ArkemaHouse6-LYX-LM2-@512.png`)
+  // const aoMap1 = await loadLightMap(`${prefix}/ArkemaHouse6-KOK-AO1-@512.png`)
+  // const aoMap2 = await loadLightMap(`${prefix}/ArkemaHouse6-KOK-AO2-@512.png`)
+  const aoMap1 = whiteTexture
+  const aoMap2 = whiteTexture
+
+  const materials = getAllMaterials(gltf.scene)
+  for (const material of materials) {
+    if (material.name.includes('_LM1')) {
+      material['lightMap'] = lightMap1
+      material['lightMapIntensity'] = 1
+      material['side'] = FrontSide
+    }
+  }
+
+  const meshes = [...queryDescendantsOf(gltf.scene, child => !!child['isMesh'])] as Mesh[]
+  for (const mesh of meshes) {
+    mesh.receiveShadow = true
+    mesh.castShadow = true
+  }
+
+  return
 
   const processedMaterials = new Map<Material, Material>()
   function getConvertedMaterial(material: Material, aoMap: Texture, lightMap: Texture, {
@@ -165,7 +198,7 @@ async function main() {
     if (child['isMesh']) {
       const mesh = child as Mesh
       const index = getLightMapIndex(child)
-      // console.log(mesh.name, index)
+      console.log(mesh.name, index)
       const lightMap = [whiteTexture, lightMap1, lightMap2][index]
       const aoMap = [whiteTexture, aoMap1, aoMap2][index]
       mesh.receiveShadow = true
