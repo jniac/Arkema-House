@@ -5,12 +5,12 @@ import { io } from './tools/io.mjs'
 
 const entries = [
   {
-    input: '../../output/ArkemaHouse6-LYX.glb',
-    output: '../../output/ArkemaHouse6-LYX-merge.glb',
+    input: '../../output/ArkemaHouse6-NAV-jpeg.glb',
+    output: '../../output/ArkemaHouse6-NAV-jpeg-merge.glb',
   },
   {
-    input: '../../output/ArkemaHouse6-LYX-webp.glb',
-    output: '../../output/ArkemaHouse6-LYX-webp-merge.glb',
+    input: '../../output/ArkemaHouse6-NAV-webp.glb',
+    output: '../../output/ArkemaHouse6-NAV-webp-merge.glb',
   },
 ]
 

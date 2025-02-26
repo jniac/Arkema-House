@@ -56,17 +56,17 @@ async function main() {
 
   const sun = new DirectionalLight('#ffffff', 1)
   sun.position.set(-20, 30, -10)
-  sun.castShadow = true
-  sun.shadow.intensity = .33
-  sun.shadow.mapSize.set(4096, 4096)
-  const size = 10
-  sun.shadow.camera.far = 100
-  sun.shadow.camera.top = size
-  sun.shadow.camera.bottom = -size
-  sun.shadow.camera.left = -size
-  sun.shadow.camera.right = size
-  sun.shadow.bias = -.00001
-  sun.shadow.radius = 10
+  // sun.castShadow = true
+  // sun.shadow.intensity = .33
+  // sun.shadow.mapSize.set(4096, 4096)
+  // const size = 10
+  // sun.shadow.camera.far = 100
+  // sun.shadow.camera.top = size
+  // sun.shadow.camera.bottom = -size
+  // sun.shadow.camera.left = -size
+  // sun.shadow.camera.right = size
+  // sun.shadow.bias = -.00001
+  // sun.shadow.radius = 10
   three.scene.add(sun)
 
   three.scene.add(pointLights().group)
@@ -103,16 +103,16 @@ async function main() {
 
   const envMap = await loadEnvMap('assets/kloofendal_43d_clear_puresky_4k.hdr')
   three.scene.environment = envMap
-  three.scene.environmentIntensity = .33
+  three.scene.environmentIntensity = .66
 
   Object.assign(window, { three, controls })
 
-  const gltf = await loadGLTF('ArkemaHouse6-LYX-webp-merge.glb')
+  const gltf = await loadGLTF('ArkemaHouse6-NAV-webp-merge.glb')
   three.scene.add(gltf.scene)
 
-  const lightMap1 = await loadLightMap('ArkemaHouse6-LYX-LM1-@512.png')
-  const lightMap2 = await loadLightMap('ArkemaHouse6-LYX-LM2-@512.png')
-  const lightMap3 = await loadLightMap('ArkemaHouse6-LYX-LM3-@512.png')
+  const lightMap1 = await loadLightMap('ArkemaHouse6-NAV-LM1-@512-denoise.webp')
+  const lightMap2 = await loadLightMap('ArkemaHouse6-NAV-LM2-@512-denoise.webp')
+  const lightMap3 = await loadLightMap('ArkemaHouse6-NAV-LM3-@512-denoise.webp')
 
   const materials = getAllMaterials(gltf.scene)
   const newMaterials = new Map<Material, Material>()
@@ -123,7 +123,7 @@ async function main() {
           material.name.includes('_LM3') ? lightMap3 :
             whiteTexture
 
-    const debug = !false
+    const debug = false
 
     if (debug) {
       const newMaterial = new MeshBasicMaterial({
@@ -137,6 +137,8 @@ async function main() {
       const newMaterial = material.clone()
       newMaterial['lightMap'] = lightMap
       newMaterial['lightMapIntensity'] = 1
+      newMaterial['aoMap'] = lightMap
+      newMaterial['aoMapIntensity'] = 1
       material['side'] = FrontSide
       newMaterials.set(material, newMaterial)
     }
