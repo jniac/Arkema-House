@@ -96,3 +96,35 @@ export const whiteTexture = (() => {
 
   return texture
 })()
+
+export const gray1Texture = (() => {
+  const width = 4
+  const height = 4
+  const size = width * height
+  const data = new Uint8Array(4 * size).fill(0xcc)
+
+  const texture = new DataTexture(data, width, height, RGBAFormat, UnsignedByteType)
+  texture.magFilter = NearestFilter
+  texture.minFilter = NearestFilter
+  texture.wrapS = RepeatWrapping
+  texture.wrapT = RepeatWrapping
+  texture.needsUpdate = true
+
+  return texture
+})()
+
+export const gray2Texture = (() => {
+  const width = 4
+  const height = 4
+  const size = width * height
+  const data = new Uint8Array(4 * size).fill(0x99)
+
+  const texture = new DataTexture(data, width, height, RGBAFormat, UnsignedByteType)
+  texture.magFilter = NearestFilter
+  texture.minFilter = NearestFilter
+  texture.wrapS = RepeatWrapping
+  texture.wrapT = RepeatWrapping
+  texture.needsUpdate = true
+
+  return texture
+})()

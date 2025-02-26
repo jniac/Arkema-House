@@ -9,7 +9,7 @@ import { glsl_easings } from 'some-utils-ts/glsl/easings'
 import { glsl_stegu_snoise } from 'some-utils-ts/glsl/stegu-snoise'
 import { glsl_utils } from 'some-utils-ts/glsl/utils'
 
-import { initAssets, loadEnvMap, loadGLTF, loadLightMap, whiteTexture } from './assets'
+import { gray1Texture, initAssets, loadEnvMap, loadGLTF, loadLightMap } from './assets'
 import { debugKnot } from './debug-knot'
 import { loading } from './loading'
 import { pointLights } from './point-lights'
@@ -121,7 +121,7 @@ async function main() {
       material.name.includes('_LM1') ? lightMap1 :
         material.name.includes('_LM2') ? lightMap2 :
           material.name.includes('_LM3') ? lightMap3 :
-            whiteTexture
+            gray1Texture
 
     const debug = false
 
